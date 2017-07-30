@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Repast_Wear</string>
+    
+    <string name="cash_tishi">很抱歉!程序出现异常退出!</string>
+    <string name="network_error">网络开小差了,请检查网络</string>
+    <string name="no_more">暂无更多数据</string>
+    <string name="sdcard_is_null">找不到该设备SD卡!</string>
+    
+    <string name="new_photo">拍照</string>
+    <string name="select_photo">从手机相册选择</string>
+    <string name="cancel">取消</string>
+    
+    <string name="request_timeout">请求超时</string>
+    <string name="internal_server_error">请求服务器异常</string>
+
+
+</resources>

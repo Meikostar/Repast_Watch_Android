@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center_horizontal"
+    android:layout_width="360dp"
+    android:layout_height="80dp">
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="59dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:text="服务员A"
+        android:textSize="16sp"/>
+    <ImageView
+        android:id="@+id/to_right"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="18dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_marginRight="10dp"/>
+</RelativeLayout>

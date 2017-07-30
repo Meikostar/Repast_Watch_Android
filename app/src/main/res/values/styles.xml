@@ -1,0 +1,68 @@
+<resources>
+    
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+    </style>
+    
+    <style name="ToolbarTextAppearanceTitle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/menu_background</item>
+    </style>
+    <!-- 进度条 -->
+    <style name="progressDialog" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowFrame">@null</item><!--边框  -->
+        <item name="android:windowIsFloating">true</item><!-- 是否悬浮在Activity上 -->
+        <item name="android:windowIsTranslucent">true</item><!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item><!-- 无标题 -->
+        <item name="android:windowBackground">@color/transparent</item><!-- 背景透明  -->
+        <item name="android:backgroundDimEnabled">false</item><!-- 模糊  -->
+    </style>
+    <!-- 对话框样式 -->
+    <style name="Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    
+    <!-- 底部弹出动画样式 -->
+    <style name="AnimBottom" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/push_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
+    </style>
+    <!--导航条-->
+    <declare-styleable name="NavigationBar">
+        <attr name="navigation_bg" format="color"></attr>
+
+        <attr name="navigationLeft_type" format="enum">
+            <enum name="gone" value="0"></enum>
+            <enum name="img" value="1"></enum>
+        </attr>
+        <attr name="navigationRight_type" format="enum">
+            <enum name="gone" value="0"></enum>
+            <enum name="img" value="1"></enum>
+            <enum name="txt" value="2"></enum>
+            <enum name="top" value="3"></enum>
+        </attr>
+        <attr name="navigationTitle" format="string"></attr>
+        <attr name="navigationRight_txt" format="string"></attr>
+        <attr name="navigationRight_txt_color" format="color"></attr>
+        <attr name="navigationRight_img" format="reference"></attr>
+        <attr name="navigationLeft_img" format="reference"></attr>
+        <attr name="right_img" format="reference"></attr>
+    </declare-styleable>
+    <!-- 圆形ImageView -->
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+    </declare-styleable>
+</resources>

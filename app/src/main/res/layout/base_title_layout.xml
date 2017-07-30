@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/title_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/title_bar_height"
+    android:background="@color/dominant_hue">
+    
+    <LinearLayout
+        android:id="@+id/title_right_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" />
+    
+    <LinearLayout
+        android:id="@+id/title_left_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10">
+        
+        <TextView
+            android:id="@+id/title_back_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@mipmap/back"
+            android:gravity="center"
+            android:text="返回"
+            android:textColor="@color/white" />
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+</RelativeLayout>
