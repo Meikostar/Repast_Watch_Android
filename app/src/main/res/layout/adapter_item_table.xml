@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_contain"
+    android:layout_gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp"
+    android:background="@color/black"
+    android:layout_height="40dp">
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:layout_centerVertical="true"
+        android:text="服务员A"
+        android:textSize="28px"/>
+    <CheckBox
+        android:id="@+id/to_right"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:button="@drawable/checkbox"
+        android:layout_marginRight="5dp"/>
+</RelativeLayout>

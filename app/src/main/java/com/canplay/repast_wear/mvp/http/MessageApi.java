@@ -7,9 +7,6 @@ import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
 import rx.Observable;
 
-/**
- * Created by qi_fu on 2017/7/27.
- */
 
 public interface MessageApi {
     /**

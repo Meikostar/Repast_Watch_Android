@@ -63,12 +63,12 @@ public final class HttpLoggingInterceptor implements Interceptor{
          * <pre>{@code
          * --> POST /greeting HTTP/1.1
          * Host: example.com
-         * Content-Type: plain/text
+         * Content-Type: plain/binder_lay2
          * Content-Length: 3
          * --> END POST
          *
          * <-- HTTP/1.1 200 OK (22ms)
-         * Content-Type: plain/text
+         * Content-Type: plain/binder_lay2
          * Content-Length: 6
          * <-- END HTTP
          * }</pre>
@@ -81,14 +81,14 @@ public final class HttpLoggingInterceptor implements Interceptor{
          * <pre>{@code
          * --> POST /greeting HTTP/1.1
          * Host: example.com
-         * Content-Type: plain/text
+         * Content-Type: plain/binder_lay2
          * Content-Length: 3
          *
          * Hi?
          * --> END GET
          *
          * <-- HTTP/1.1 200 OK (22ms)
-         * Content-Type: plain/text
+         * Content-Type: plain/binder_lay2
          * Content-Length: 6
          *
          * Hello!

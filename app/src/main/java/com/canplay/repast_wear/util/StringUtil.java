@@ -208,15 +208,15 @@ public class StringUtil {
     }
 /*    *//**
      * 设置hint提示语
-     * @param text
+     * @param activity_binder_table
      * @return
      *//*
-    public static SpannableStringBuilder getSpannable(String text, Context context, int start, int end){
-        SpannableStringBuilder spannable=new SpannableStringBuilder(text);
+    public static SpannableStringBuilder getSpannable(String activity_binder_table, Context context, int start, int end){
+        SpannableStringBuilder spannable=new SpannableStringBuilder(activity_binder_table);
         CharacterStyle span_1=new ForegroundColorSpan(context.getResources().getColor(R.color.color_red1));
         CharacterStyle span_2=new ForegroundColorSpan(context.getResources().getColor(R.color.color_primary_b3));
         spannable.setSpan(span_1, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(span_2, end, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(span_2, end, activity_binder_table.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }*/
 

@@ -18,9 +18,6 @@ import javax.inject.Inject;
 
 import rx.Subscription;
 
-/**
- * Created by qi_fu on 2017/7/27.
- */
 
 public class MessagePresenter implements MessageContract.Presenter {
     private Subscription subscription;

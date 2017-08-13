@@ -8,10 +8,6 @@ import com.canplay.repast_wear.base.BaseView;
 
 import java.util.List;
 
-/**
- * Created by qi_fu on 2017/7/27.
- */
-
 public class MessageContract {
     interface View extends BaseView {
 

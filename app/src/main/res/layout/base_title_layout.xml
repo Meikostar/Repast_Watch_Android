@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/title_bar_height"
-    android:background="@color/dominant_hue">
+    android:background="@color/black">
     
     <LinearLayout
         android:id="@+id/title_right_layout"
@@ -31,6 +31,7 @@
             android:drawableLeft="@mipmap/back"
             android:gravity="center"
             android:text="返回"
+            android:textSize="24px"
             android:textColor="@color/white" />
     </LinearLayout>
     
@@ -45,4 +46,25 @@
         android:scrollHorizontally="true"
         android:textColor="@color/white"
         android:textStyle="bold" />
+    <TextView
+        android:id="@+id/clock_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/color9"
+        android:layout_marginRight="20dp"
+        android:textSize="12sp"
+        android:text="10:09"/>
+    <TextView
+        android:id="@+id/title_r"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textColor="@color/white"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="24sp"
+        android:visibility="gone"
+        />
 </RelativeLayout>

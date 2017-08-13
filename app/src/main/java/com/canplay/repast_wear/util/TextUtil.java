@@ -1,10 +1,8 @@
 package com.canplay.repast_wear.util;
 
 
+import android.content.Context;
 import android.content.res.AssetManager;
-
-
-import com.canplay.repast_wear.base.BaseApplication;
 
 import org.json.JSONObject;
 
@@ -17,9 +15,9 @@ import java.io.InputStream;
  * 版本:1.0
  ***/
 public class TextUtil {
-    public static JSONObject getJson(String fileName) {
+    public static JSONObject getJson(String fileName,Context context) {
         try {
-            AssetManager s = BaseApplication.getInstance().getAssets();
+            AssetManager s = context.getAssets();
             InputStream is = s.open(fileName);
             byte[] buffer = new byte[is.available()];
             is.read(buffer);

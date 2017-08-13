@@ -120,7 +120,7 @@ public class ClearEditText extends EditText implements
      * */
     private void switch2PwdFunction() {
                 if (!mbDisplayFlg) {
-                    // display password text, for example "123456"
+                    // display password activity_binder_table, for example "123456"
                    setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                     setCompoundDrawablesWithIntrinsicBounds(0,0,R.mipmap.mykar_eye_ac,0);
                 } else {

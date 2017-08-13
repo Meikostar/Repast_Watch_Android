@@ -23,16 +23,19 @@ public class NetConfig{
      * 加密密钥截取开始
      */
     public static final int startNum = 2;
+//    public static final int startNum = 0;
 
     /**
      * 加密密钥截取结束
      */
     public static final int endNum = 19;
+//    public static final int endNum = 11;
 
     /*
  * 服务端地址
  */
     //public static final String SERVER_URL = "http://wx.canplay.com.cn/medical/doctor";//测试
     //public static final String SERVER_URL = "http://192.168.0.104:12071";//测试
-    public static final String SERVER_URL = "http://app.gd-yijiaren.com/medical/doctor";//正式
+//    public static final String SERVER_URL = "http://app.gd-yijiaren.com/medical/doctor";//正式
+    public static final String SERVER_URL = "http://113.209.77.204:10071";//测试
 }

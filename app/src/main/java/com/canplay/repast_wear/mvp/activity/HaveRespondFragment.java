@@ -1,15 +1,17 @@
 package com.canplay.repast_wear.mvp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.base.BaseFragment;
-import com.canplay.repast_wear.mvp.adapter.MessageAdapter;
+import com.canplay.repast_wear.mvp.adapter.RespondAdapter;
 import com.canplay.repast_wear.mvp.model.Message;
 
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class HaveRespondFragment extends BaseFragment {
     ListView listHaveRespond;
     private Unbinder unbinder;
     private List<Message> messages = new ArrayList<>();
-    private MessageAdapter adapter;
+    private RespondAdapter adapter;
 
     public static HaveRespondFragment newInstance() {
         HaveRespondFragment fragment = new HaveRespondFragment();
@@ -47,11 +49,18 @@ public class HaveRespondFragment extends BaseFragment {
     }
 
     private void inject() {
+        listHaveRespond.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(getActivity(),BinderActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
     private void initView() {
-        adapter = new MessageAdapter(getActivity(), messages);
+        adapter = new RespondAdapter(getActivity(), messages);
         adapter.setType(1);
         listHaveRespond.setAdapter(adapter);
     }
@@ -59,7 +68,7 @@ public class HaveRespondFragment extends BaseFragment {
     private void initData() {
         for (int i = 0; i < 10; i++) {
             Message message = new Message();
-            message.setTableFrom(i + "号桌");
+            message.setNumber(i + "");
             message.setContent("转移给" + i);
             messages.add(message);
         }

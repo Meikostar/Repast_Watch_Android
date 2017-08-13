@@ -188,7 +188,7 @@ public class ApiManager{
             parametersMap.put("device", AppManager.imei);//设备标识
             parametersMap.put("times", System.currentTimeMillis() + "");
         }
-        parametersMap.put("platform", "2"); //平台
+        parametersMap.put("platform", "2"); //手表
         parametersMap.put("version", AppManager.info.versionCode + "");//客户端版本
         parametersMap.put("sign", getSign(parametersMap));
         Logger.d("parameters Json:" + JSONObject.toJSON(parametersMap));

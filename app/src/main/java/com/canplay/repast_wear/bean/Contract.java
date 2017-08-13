@@ -21,4 +21,6 @@ public class Contract{
 
     public static final String IS_FIRST= "IS_FIRST";//是否是第一次进入APP
 
+    public static final int CITY_LIST = 100;    //省市列表
+
 }

@@ -9,7 +9,7 @@ import android.widget.ListView;
 
 import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.base.BaseFragment;
-import com.canplay.repast_wear.mvp.adapter.MessageAdapter;
+import com.canplay.repast_wear.mvp.adapter.RespondAdapter;
 import com.canplay.repast_wear.mvp.model.Message;
 
 import java.util.ArrayList;
@@ -19,13 +19,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-
 public class NoRespondFragment extends BaseFragment {
     @BindView(R.id.list_no_respond)
     ListView listNoRespond;
     private Unbinder unbinder;
     private List<Message> messages = new ArrayList<>();
-    private MessageAdapter adapter;
+    private RespondAdapter adapter;
 
     public static NoRespondFragment newInstance() {
         NoRespondFragment fragment = new NoRespondFragment();
@@ -50,7 +49,7 @@ public class NoRespondFragment extends BaseFragment {
     }
 
     private void initView() {
-        adapter = new MessageAdapter(getActivity(), messages);
+        adapter = new RespondAdapter(getActivity(), messages);
         adapter.setType(2);
         listNoRespond.setAdapter(adapter);
     }
@@ -59,11 +58,11 @@ public class NoRespondFragment extends BaseFragment {
         for (int i = 0; i < 10; i++) {
             Message message = new Message();
             message.setTableFrom(i + "号桌");
+            message.setNumber(i+"");
             message.setContent("转移给" + i);
             messages.add(message);
         }
         adapter.notifyDataSetChanged();
-
     }
     @Override
     public void onDestroyView() {

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/black"
+    android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="64px"
+            android:layout_height="64px"
+            android:layout_marginLeft="26px"
+            android:layout_marginRight="26px"
+            android:layout_marginBottom="16px"
+            android:layout_marginTop="16px"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_24px"
+            android:gravity="center"
+            android:text="张宇"
+            android:background="@drawable/checkbox_contact"/>
+    <!--<RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:text="张宇"
+            android:background="@mipmap/can_select"/>
+    </RelativeLayout>-->
+</RelativeLayout>

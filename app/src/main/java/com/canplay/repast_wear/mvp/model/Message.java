@@ -2,15 +2,30 @@ package com.canplay.repast_wear.mvp.model;
 
 import java.io.Serializable;
 
-/**
- * Created by qi_fu on 2017/7/27.
- */
+
 
 public class Message implements Serializable{
     private String tableFrom;
-    private String icon;
+    private String number;
     private String content;
     private Long time;
+    private int type;
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public String getTableFrom() {
         return tableFrom;
@@ -20,12 +35,12 @@ public class Message implements Serializable{
         this.tableFrom = tableFrom;
     }
 
-    public String getIcon() {
-        return icon;
+    public String getNumber() {
+        return number;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public String getContent() {
