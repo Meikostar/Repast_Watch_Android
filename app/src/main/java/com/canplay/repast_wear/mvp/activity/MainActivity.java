@@ -55,8 +55,9 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         TitleBarLayout titleBarView = getTitleBarView();
         titleBarView.setLeftArrowDisable();
-        titleBarView.setBackText(R.string.main_name);
         sp = SpUtil.getInstance();
+        titleBarView.setBackText(R.string.main_name);
+
     }
 
     @Override

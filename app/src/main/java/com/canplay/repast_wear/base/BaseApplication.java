@@ -7,6 +7,8 @@ import android.support.multidex.MultiDex;
 import com.canplay.repast_wear.base.manager.AppManager;
 import com.canplay.repast_wear.util.ExceptionHandler;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * App基类
  * Created by peter on 2016/9/11.
@@ -33,6 +35,8 @@ public class BaseApplication extends Application{
         ApplicationConfig.setAppInfo(this);
         //全局异常处理
         new ExceptionHandler().init(this);
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
     /**

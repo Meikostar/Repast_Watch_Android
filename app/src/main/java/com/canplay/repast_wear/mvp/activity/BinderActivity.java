@@ -123,10 +123,10 @@ public class BinderActivity extends BaseActivity implements View.OnClickListener
                 }
                 break;
             case R.id.btn_next:
-                if (tvDian.getText().length() == 0) {
-                    showToast("请选择省／市／区");
-                    break;
-                }
+//                if (tvDian.getText().length() == 0) {
+//                    showToast("请选择省／市／区");
+//                    break;
+//                }
                 Intent intent=new Intent(BinderActivity.this, BinderTabeActivity.class);
                 intent.putExtra("businessId",businessId);
                 startActivity(intent);
