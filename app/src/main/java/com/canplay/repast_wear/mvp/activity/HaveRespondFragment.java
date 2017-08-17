@@ -68,8 +68,8 @@ public class HaveRespondFragment extends BaseFragment {
     private void initData() {
         for (int i = 0; i < 10; i++) {
             Message message = new Message();
-            message.setNumber(i + "");
-            message.setContent("转移给" + i);
+            message.setTableNo(i + "");
+            message.setMenuName("转移给" + i);
             messages.add(message);
         }
         adapter.notifyDataSetChanged();

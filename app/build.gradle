@@ -8,6 +8,11 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     defaultConfig {
         applicationId "com.canplay.repast_wear"
         minSdkVersion 18
@@ -70,6 +75,8 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.google.dagger:dagger-compiler:2.5'
+//    compile 'cn.jiguang.sdk:jpush:3.0.6'  // 此处以JPush 3.0.6 版本为例。
+//    compile 'cn.jiguang.sdk:jcore:1.1.6'  // 此处以JCore 1.1.6 版本为例
 //    compile 'com.google.android.support:wearable:1.4.0'
 //    compile 'com.google.android.wearable:wearable:2.0.2'
 //    compile 'com.google.android.gms:play-services-wearable:10.0.1'

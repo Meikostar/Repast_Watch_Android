@@ -448,5 +448,68 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
         }
         super.onDestroy();
     }
+//    private CountDownTimer timer;
+//    private PopupWindow window;
+//    private Vibrator vibrator;
+//    private TextView toOther;
+//    private TextView form;
+//    private TextView complain;
+//    public void showPopWindow( Message message) {
+//        // 想设置震动大小可以通过改变pattern来设定，如果开启时间太短，震动效果可能感觉不到
+//        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+//        long[] pattern = {100, 400, 100, 400}; // 停止 开启 停止 开启
+//        vibrator.vibrate(pattern, -1);
+//        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+//        //加载子布局
+//        View view = inflater.inflate(R.layout.popwindow, null);
+//        if (window == null) {
+//            window = new PopupWindow(view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+//        }
+//        toOther = (TextView) view.findViewById(R.id.to_other);
+//        form = (TextView) view.findViewById(R.id.former);
+//        complain = (TextView) view.findViewById(R.id.complain);
+//        final TextView clockTime = (TextView) view.findViewById(R.id.clock_time);
+//        //获取焦点
+//        window.setFocusable(true);
+//        window.setOutsideTouchable(true);
+//        //背景颜色
+//        window.setBackgroundDrawable(new ColorDrawable(0xffffff));
+//        //动画效果（进入页面和退出页面时的效果）
+//        //window.setAnimationStyle(R.style.windows);
+//        //显示位置：showAtLocation(主布局所点击的按钮id, 位置, x, y);
+//        window.showAtLocation(, Gravity.CENTER, 0, 0);
+//        //弹窗消失监听
+//        if (timer == null) {
+//            timer = new CountDownTimer(30000, 1000) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    clockTime.setText((millisUntilFinished / 1000) + "");
+////                    showtime = millisUntilFinished;
+//                }
+//                @Override
+//                public void onFinish() {
+//                    window.dismiss();
+//                }
+//            }.start();
+//        } else timer.start();
+//        setPopListen();
+//    }
+//
+//    private void setPopListen() {
+//        toOther.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                window.dismiss();
+//                Intent intent = new Intent(BaseActivity.this, ToContactActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//        complain.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                window.dismiss();
+//            }
+//        });
+//    }
 
 }

@@ -4,11 +4,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.canplay.repast_wear.base.manager.ApiManager;
-import com.canplay.repast_wear.bean.Contract;
 import com.canplay.repast_wear.mvp.http.TableApi;
 import com.canplay.repast_wear.mvp.model.PROVINCE;
 import com.canplay.repast_wear.mvp.model.Table;
-import com.canplay.repast_wear.mvp.model.provinceCityList;
 import com.canplay.repast_wear.net.MySubscriber;
 
 import java.util.List;
@@ -32,20 +30,20 @@ public class TablePresenter implements TableContract.Presenter {
         tableApi = apiManager.createApi(TableApi.class);
     }
 
-    @Override
-    public void getCityList() {
-        Map<String, String> params = new TreeMap<>();
-        subscription=ApiManager.setSubscribe(tableApi.getCityList(ApiManager.getParameters(params, false)), new MySubscriber<List<provinceCityList>>() {
-            @Override
-            public void onError(Throwable e){
-                super.onError(e);
-            }
-            @Override
-            public void onNext(List<provinceCityList> list) {
-                mView.toList(list, Contract.CITY_LIST);
-            }
-        });
-    }
+//    @Override
+//    public void getCityList() {
+//        Map<String, String> params = new TreeMap<>();
+//        subscription=ApiManager.setSubscribe(tableApi.getCityList(ApiManager.getParameters(params, false)), new MySubscriber<List<CITY>>() {
+//            @Override
+//            public void onError(Throwable e){
+//                super.onError(e);
+//            }
+//            @Override
+//            public void onNext(List<CITY> list) {
+//                mView.toList(list, Contract.CITY_LIST);
+//            }
+//        });
+//    }
     @Override
     public void getBusinessTableList(long businessId, final Context context) {
         Map<String, String> params = new TreeMap<>();
@@ -83,6 +81,28 @@ public class TablePresenter implements TableContract.Presenter {
     public void attachView(@NonNull TableContract.View view){
         mView = view;
     }
+
+    @Override
+    public void bondBusiness(String deviceCode,long businessId,String tableNo, Context context) {
+        Map<String, String> params = new TreeMap<>();
+        params.put("deviceCode", deviceCode + "");
+        params.put("businessId", businessId + "");
+        params.put("tableNo", tableNo + "");
+        subscription = ApiManager.setSubscribe(tableApi.bondBusiness(ApiManager.getParameters(params, true)), new MySubscriber<String>(){
+            @Override
+            public void onError(Throwable e){
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(String entity){
+                mView.toNextStep(2);
+//               mView.showTomast(entity);
+            }
+        });
+    }
+
+
 
 
     @Override

@@ -16,9 +16,13 @@ import com.canplay.repast_wear.mvp.present.TablePresenter;
 import com.canplay.repast_wear.util.TextUtil;
 import com.canplay.repast_wear.view.NavigationBar;
 import com.google.gson.Gson;
+
 import org.json.JSONObject;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observable;
@@ -72,7 +76,7 @@ public class BaseAdressActivity extends BaseActivity implements TableContract.Vi
             navigationBar.setNaviTitle("市/区");
         }else if(title.equals("县")) {
             navigationBar.setNaviTitle("县/区");
-        }else {
+         }else {
             navigationBar.setNaviTitle(title);
             tablePresenter.getBusinessNameList(areaCode);
         }

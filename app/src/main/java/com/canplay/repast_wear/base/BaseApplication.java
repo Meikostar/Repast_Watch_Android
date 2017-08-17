@@ -3,9 +3,11 @@ package com.canplay.repast_wear.base;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.canplay.repast_wear.base.manager.AppManager;
 import com.canplay.repast_wear.util.ExceptionHandler;
+import com.canplay.repast_wear.util.JPushUtils;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -22,7 +24,6 @@ public class BaseApplication extends Application{
         if (cplayApplication == null) {
             cplayApplication = new BaseApplication();
         }
-
         return (BaseApplication) cplayApplication;
     }
     @Override
@@ -37,6 +38,11 @@ public class BaseApplication extends Application{
         new ExceptionHandler().init(this);
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
+        JPushInterface.setLatestNotificationNumber(this, 1);
+        String androidId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        JPushUtils.shareInstance().setAlias(androidId);
+        Log.e("---androidId----",androidId);
+        this.cplayApplication = this;
     }
 
     /**
@@ -45,29 +51,6 @@ public class BaseApplication extends Application{
     public void exit(){
         AppManager.getInstance(this).exitAPP(this);
     }
-    //    /**
-    //     * 退出应用
-    //     *
-    //     * @param exitAppListener 应用退出时监听，在应用完全退出前可进行额外操作。
-    //     */
-    //    public void exit(OnExitAppListener exitAppListener){
-    //        //应用退出监听
-    //        if(exitAppListener != null)
-    //            exitAppListener.onExit();
-    //        //杀进程，关闭应用
-    //        android.os.Process.killProcess(android.os.Process.myPid());
-    //        android.app.ActivityManager activityMgr = (android.app.ActivityManager) getSystemService(ACTIVITY_SERVICE);
-    //        activityMgr.restartPackage(getPackageName());
-    //        System.exit(0);
-    //        System.gc();
-    //    }
-    //
-    //    /**
-    //     * 应用退出时监听
-    //     */
-    //    public interface OnExitAppListener{
-    //        public void onExit();
-    //    }
 
     @Override
     protected void attachBaseContext(Context base){

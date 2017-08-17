@@ -10,23 +10,35 @@ import android.widget.TextView;
 
 import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.base.BaseActivity;
-import com.canplay.repast_wear.mvp.model.Contact;
+import com.canplay.repast_wear.base.BaseApplication;
+import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
+import com.canplay.repast_wear.mvp.model.AccountManager;
+import com.canplay.repast_wear.mvp.model.Table;
+import com.canplay.repast_wear.mvp.present.MessageContract;
+import com.canplay.repast_wear.mvp.present.MessagePresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ToContactActivity extends BaseActivity {
+public class ToContactActivity extends BaseActivity implements MessageContract.View {
+    @Inject
+    MessagePresenter presenter;
     @BindView(R.id.list_to_other)
     GridView listToOther;
-    private List<Contact> nameList = new ArrayList<>();
+    private List<Table> nameList = new ArrayList<>();
     private ListAdapter adapter;
     private TextView name;
+    private long pushId;
+
     @Override
     public void initInjector() {
-
+        DaggerBaseComponent.builder().appComponent(((BaseApplication) getApplication()).getAppComponent()).build().inject(this);
+        presenter.attachView(this);
         initUI(R.layout.activity_change);
         ButterKnife.bind(this);
     }
@@ -41,29 +53,31 @@ public class ToContactActivity extends BaseActivity {
                                 View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 name = (TextView) view.findViewById(R.id.tv_name);
-                name.setText(nameList.get(position).getName());
+                name.setText(nameList.get(position).getTableNo());
                 return view;
             }
         };
-        for (int i = 0; i < 10; i++) {
-            Contact contact=new Contact();
-            contact.setName("服务员"+i);
-            nameList.add(contact);
-        }
+        nameList = AccountManager.getTableList();
         listToOther.setAdapter(adapter);
     }
 
     @Override
     public void initOther() {
+        pushId = getIntent().getLongExtra("pushId", 0);
         listToOther.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 name.setBackground(getResources().getDrawable(R.drawable.org_cycle));
-                showToast("转移成功");
-                finish();
-//                Intent intent=new Intent(ToContactActivity.this,RespondActivity.class);
-//                startActivity(intent);
+//                presenter.pushMessage(pushId,nameList.get(position).getTableId(),ToContactActivity.this);
             }
         });
+    }
+
+    @Override
+    public void showTomast(String msg) {
+        if (msg.equals("true") || msg.equals("转移成功")) {
+            finish();
+        }
+        showTomast(msg);
     }
 }

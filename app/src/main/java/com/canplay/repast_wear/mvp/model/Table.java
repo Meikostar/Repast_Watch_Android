@@ -4,11 +4,11 @@ package com.canplay.repast_wear.mvp.model;
 public class Table {
     /**
      *  {
-     "layoutId": 1,
+     "tableId": 1,
      "tableNo": "1",
      "bound": 0}
      */
-    private long layoutId;
+    private long tableId;
     private String tableNo;
     private int bound;
 
@@ -29,12 +29,12 @@ public class Table {
         this.bound = bound;
     }
 
-    public long getLayoutId() {
-        return layoutId;
+    public long getTableId() {
+        return tableId;
     }
 
-    public void setLayoutId(long layoutId) {
-        this.layoutId = layoutId;
+    public void setTableId(long tableId) {
+        this.tableId = tableId;
     }
 
 }

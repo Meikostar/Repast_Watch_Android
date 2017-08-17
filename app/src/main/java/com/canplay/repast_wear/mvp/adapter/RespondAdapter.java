@@ -54,9 +54,9 @@ public class RespondAdapter extends BaseAdapter {
             convertView.setTag(holder);
         }else holder =(ViewHolder) convertView.getTag();
         Message message = messageList.get(position);
-        holder.tvContext.setText(message.getContent());
-        holder.tableNumber.setText(message.getNumber());
-//        holder.tvTime.setText(message.getTime() == null ? "" : message.getTime() + "");//暂时注掉
+        holder.tvContext.setText(message.getMenuName());
+        holder.tableNumber.setText(message.getTableNo());
+//        holder.tvTime.setText(message.getPushId() == null ? "" : message.getPushId() + "");//暂时注掉
         if (type == 1) {//已完成
             holder.finished.setVisibility(View.VISIBLE);
             holder.imageNext.setVisibility(View.GONE);

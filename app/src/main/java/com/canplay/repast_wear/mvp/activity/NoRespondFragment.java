@@ -58,8 +58,8 @@ public class NoRespondFragment extends BaseFragment {
         for (int i = 0; i < 10; i++) {
             Message message = new Message();
             message.setTableFrom(i + "号桌");
-            message.setNumber(i+"");
-            message.setContent("转移给" + i);
+            message.setTableNo(i+"");
+            message.setMenuName("转移给" + i);
             messages.add(message);
         }
         adapter.notifyDataSetChanged();

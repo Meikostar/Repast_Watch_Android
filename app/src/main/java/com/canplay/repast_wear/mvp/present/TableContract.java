@@ -20,10 +20,10 @@ public class TableContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        /**
-         * 获得绑定省市列表
-         */
-        void getCityList();
+//        /**
+//         * 获得绑定省市列表
+//         */
+//        void getCityList();
 
         /**
          * 获得商店列表
@@ -34,6 +34,11 @@ public class TableContract {
          * 获得桌号列表
          */
         void getBusinessTableList(long businessId, Context context);
+
+        /**
+         * 获得绑定桌号
+         */
+        void bondBusiness(String deviceCode,long businessId,String tableNo, Context context);
 
 
     }

@@ -1,10 +1,12 @@
 package com.canplay.repast_wear.base.manager;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -22,7 +24,7 @@ import static android.content.Context.TELEPHONY_SERVICE;
  * app管理类
  * Created by peter on 2016/9/17.
  */
-public class AppManager{
+public class AppManager {
 
     public static Context context;
 
@@ -38,15 +40,15 @@ public class AppManager{
 
     private static Stack<Activity> activityStack = null;
 
-    private AppManager(Context context){
+    private AppManager(Context context) {
         this.context = context;
         CanplayUtils.getDisplayMetrics(context);
     }
 
-    public static AppManager getInstance(Context context){
-        if(null == instance)
-            synchronized(AppManager.class){
-                if(null == instance){
+    public static AppManager getInstance(Context context) {
+        if (null == instance)
+            synchronized (AppManager.class) {
+                if (null == instance) {
                     instance = new AppManager(context);
                     getPackageInfo();
                 }
@@ -59,9 +61,9 @@ public class AppManager{
      *
      * @param at
      */
-    public void addActivity(Activity at){
-        if(at != null){
-            if(activityStack == null){
+    public void addActivity(Activity at) {
+        if (at != null) {
+            if (activityStack == null) {
                 activityStack = new Stack<Activity>();
             }
             activityStack.add(at);
@@ -71,8 +73,8 @@ public class AppManager{
     /**
      * 结束当前栈顶的Activity
      */
-    public void finishActivity(){
-        if(activityStack != null){
+    public void finishActivity() {
+        if (activityStack != null) {
             Activity at = activityStack.lastElement();
             finishActivity(at);
         }
@@ -83,8 +85,8 @@ public class AppManager{
      *
      * @param at
      */
-    public void finishActivity(Activity at){
-        if(activityStack != null && at != null){
+    public void finishActivity(Activity at) {
+        if (activityStack != null && at != null) {
             activityStack.remove(at);
             at.finish();
             at = null;
@@ -96,10 +98,10 @@ public class AppManager{
      *
      * @param cls
      */
-    public void finishActvity(Class<?> cls){
-        if(activityStack != null && cls != null){
-            for(Activity at : activityStack){
-                if(at.getClass().equals(cls)){
+    public void finishActvity(Class<?> cls) {
+        if (activityStack != null && cls != null) {
+            for (Activity at : activityStack) {
+                if (at.getClass().equals(cls)) {
                     finishActivity(at);
                 }
             }
@@ -109,10 +111,10 @@ public class AppManager{
     /**
      * 结束所有的Activity
      */
-    public void finishAllActivity(){
-        if(activityStack != null){
+    public void finishAllActivity() {
+        if (activityStack != null) {
             int size = activityStack.size();
-            for(int i = 0; i < size; i++){
+            for (int i = 0; i < size; i++) {
                 Activity activity = activityStack.get(i);
                 Logger.e("activity:" + activity.getLocalClassName());
                 activity.finish();
@@ -125,7 +127,7 @@ public class AppManager{
     /**
      * 退出应用程序
      */
-    public void exitAPP(Context context){
+    public void exitAPP(Context context) {
         finishAllActivity();
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         am.killBackgroundProcesses(context.getPackageName());
@@ -138,10 +140,10 @@ public class AppManager{
      *
      * @return
      */
-    public int getCount(){
-        if(activityStack != null && !activityStack.isEmpty()){
+    public int getCount() {
+        if (activityStack != null && !activityStack.isEmpty()) {
             return activityStack.size();
-        }else{
+        } else {
             return 0;
         }
     }
@@ -149,19 +151,19 @@ public class AppManager{
     /*
     获得手机管理器
      */
-    public void getTelephonyManager(){
+    public void getTelephonyManager() {
         tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
         imei = tm.getDeviceId();
-        if(TextUtils.isEmpty(imei)){
+        if (TextUtils.isEmpty(imei)) {
             imei = android.os.Build.SERIAL;
         }
         Logger.e("imei" + imei);
     }
 
-    public static void getPackageInfo(){
-        try{
+    public static void getPackageInfo() {
+        try {
             info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        }catch(PackageManager.NameNotFoundException e){
+        } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -169,11 +171,11 @@ public class AppManager{
     /*
     获得缓存目录
      */
-    public static File getCacheDir(){
+    public static File getCacheDir() {
         Log.i("getCacheDir", "cache sdcard state: " + Environment.getExternalStorageState());
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             File cacheDir = context.getExternalCacheDir();
-            if(cacheDir != null && (cacheDir.exists() || cacheDir.mkdirs())){
+            if (cacheDir != null && (cacheDir.exists() || cacheDir.mkdirs())) {
                 Log.i("getCacheDir", "cache dir: " + cacheDir.getAbsolutePath());
                 return cacheDir;
             }
@@ -186,13 +188,45 @@ public class AppManager{
     /**
      * 获取当前Activity（栈顶Activity）
      */
-    public static Activity topActivity(){
-        if(activityStack == null){
+    public static Activity topActivity() {
+        if (activityStack == null) {
             throw new NullPointerException("Activity stack is Null,your Activity must extend BaseActivity");
         }
-        if(activityStack.isEmpty()){
+        if (activityStack.isEmpty()) {
             return null;
         }
         return activityStack.lastElement();
     }
+
+
+    /**
+     * 判断一个Activity 是否存在
+     *
+     * @param clz
+     * @return
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public  <T extends Activity> boolean isActivityExist(Class<T> clz) {
+        boolean res = false;
+        if (activityStack != null && clz != null) {
+            for (Activity at : activityStack) {
+                if (at.getClass().equals(clz)) {
+                    res = true;
+                }
+            }
+        }
+        return res;
+    }
+    /**
+     * 结束此Activity之前的所有Activity
+     */
+    public  <T extends Activity> void finishActivityTop(Class<T> clz){
+        if (activityStack != null && clz != null) {
+            for (int i = activityStack.size()-1; i >0; i--) {
+                if (activityStack.get(i).getClass().equals(clz)) break;
+                else finishActivity(activityStack.get(i));
+            }
+        }
+    }
+
 }

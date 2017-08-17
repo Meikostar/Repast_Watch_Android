@@ -30,6 +30,7 @@
             android:layout_width="55px"
             android:layout_height="55px"
             android:layout_marginLeft="9dp"
+            android:clipChildren="false"
             android:background="@drawable/pink_cycle"
             android:gravity="center"
             android:text="01"
@@ -39,7 +40,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/menuName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -48,6 +49,7 @@
         android:gravity="center"
         android:paddingBottom="16dp"
         android:paddingTop="10dp"
+        android:clipToPadding="false"
         android:text="加水"
         android:textColor="@color/white"
         android:textSize="32px" />

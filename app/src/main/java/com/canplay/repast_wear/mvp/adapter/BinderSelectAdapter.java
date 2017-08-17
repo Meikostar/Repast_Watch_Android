@@ -19,15 +19,15 @@ import butterknife.ButterKnife;
 
 public class BinderSelectAdapter extends BaseAdapter {
 
-    private List<Map<String,Object>> objects;
+    private List<Map<String, Object>> objects;
     private Context context;
     private LayoutInflater layoutInflater;
     private boolean isSelect;
     private boolean canSelect;
 
 
-    public BinderSelectAdapter(Context context,List<Map<String,Object>> objects) {
-        this.objects=objects;
+    public BinderSelectAdapter(Context context, List<Map<String, Object>> objects) {
+        this.objects = objects;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
     }
@@ -38,7 +38,7 @@ public class BinderSelectAdapter extends BaseAdapter {
     }
 
     @Override
-    public Map<String,Object> getItem(int position) {
+    public Map<String, Object> getItem(int position) {
         return objects.get(position);
     }
 
@@ -54,30 +54,32 @@ public class BinderSelectAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.adapter_item_table, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
         final Map<String, Object> map = objects.get(position);
-        holder.tvName.setText(String.valueOf(map.get("tableNumber")));
+        holder.tvName.setText(String.valueOf(map.get("tableNumber") + "号桌"));
         final int type = (int) map.get("type");
-        if(type == 3) {
+        if (type == 3) {
             holder.toRight.setButtonDrawable(context.getResources().getDrawable(R.mipmap.no_select));
             holder.toRight.setEnabled(false);
-        }
-        else if(type == 1)
+        } else if (type == 1)
             holder.toRight.setChecked(true);
+        else if(type == 0)
+            holder.toRight.setChecked(false);
+
         holder.contain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(type == 3){
+                if (type == 3) {
                     return;
                 }
                 map.remove("type");
-                if(holder.toRight.isChecked()){
-                    map.put("type",0);
+                if (holder.toRight.isChecked()) {
+                    map.put("type", 0);
                     holder.toRight.setChecked(false);
-                }else {
-                    map.put("type",1);
+                } else {
+                    map.put("type", 1);
                     holder.toRight.setChecked(true);
                 }
             }
@@ -97,7 +99,8 @@ public class BinderSelectAdapter extends BaseAdapter {
             ButterKnife.bind(this, view);
         }
     }
-    interface setContainClikeListener extends View.OnClickListener{
+
+    interface setContainClikeListener extends View.OnClickListener {
 
     }
 }

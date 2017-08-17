@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.canplay.repast_wear.base.RxBus;
 import com.canplay.repast_wear.base.SubscriptionBean;
+import com.canplay.repast_wear.base.manager.AppManager;
+import com.canplay.repast_wear.mvp.activity.MainActivity;
 import com.canplay.repast_wear.mvp.model.Message;
 
 import org.json.JSONObject;
@@ -41,14 +43,12 @@ public class NofifyReceiver extends BroadcastReceiver {
 
         } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
             Log.d(TAG, "接受到推送下来的通知");
-
-            receivingNotification(context, bundle);
+            openNotification(context, bundle);
+//            receivingNotification(context, bundle);
 
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
             Log.d(TAG, "用户点击打开了通知");
-
-            openNotification(context, bundle);
-
+//            openNotification(context, bundle);
         } else {
             Log.d(TAG, "Unhandled intent - " + intent.getAction());
         }
@@ -65,17 +65,39 @@ public class NofifyReceiver extends BroadcastReceiver {
 
     private void openNotification(Context context, Bundle bundle) {
         String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
-        int type = 0;
-        int data_id = 0;
+        AppManager appManager = AppManager.getInstance(context);
+        if (appManager.isActivityExist(MainActivity.class)) {
+            appManager.finishActivityTop(MainActivity.class);
+            Log.e("isExist",true+"");
+        } else {
+            Intent i = new Intent();  //自定义打开的界面
+            i.setClass(context, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
+            Log.e("isExist",false+"");
+        }
+        /*
+        * "pushId": "2",
+            "menuName": "加水",
+            "tableNo": "5"
+            "message":{"msg_content":"加水","extras":{"pushId":"6","businessId":"1","menuName":"加水","tableNo":"5"}}
+*/
+        long pushId = 0;
+        String menuName;
+        String tableNo;
         try {
             JSONObject extrasJson = new JSONObject(extras);
-            type = extrasJson.optJSONObject("extras").optInt("type");
-            data_id = extrasJson.optJSONObject("extras").optInt("data_id");
+            pushId = extrasJson.optJSONObject("extras").optLong("pushId");
+            menuName = extrasJson.optJSONObject("extras").optString("menuName");
+            tableNo = extrasJson.optJSONObject("extras").optString("tableNo");
         } catch (Exception e) {
             Log.w(TAG, "Unexpected: extras is not a valid json", e);
             return;
         }
-        Message message=(Message) bundle.get("message");
-        RxBus.getInstance().send(SubscriptionBean.createSendBean(SubscriptionBean.CHOOSE,message));
+        Message message = new Message();
+        message.setMenuName(menuName);
+        message.setPushId(pushId);
+        message.setTableNo(tableNo);
+        RxBus.getInstance().send(SubscriptionBean.createSendBean(SubscriptionBean.CHOOSE, message));
     }
 }

@@ -5,18 +5,22 @@ import java.io.Serializable;
 
 
 public class Message implements Serializable{
+    /* "pushId": "2",long
+           "menuName": "加水",
+           "tableNo": "5"
+   * */
+    private Long pushId;
+    private String tableNo;
+    private String menuName;
     private String tableFrom;
-    private String number;
-    private String content;
-    private Long time;
     private int type;
 
-    public Long getTime() {
-        return time;
+    public Long getPushId() {
+        return pushId;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
+    public void setPushId(Long pushId) {
+        this.pushId = pushId;
     }
 
     public int getType() {
@@ -35,20 +39,20 @@ public class Message implements Serializable{
         this.tableFrom = tableFrom;
     }
 
-    public String getNumber() {
-        return number;
+    public String getTableNo() {
+        return tableNo;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setTableNo(String tableNo) {
+        this.tableNo = tableNo;
     }
 
-    public String getContent() {
-        return content;
+    public String getMenuName() {
+        return menuName;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setMenuName(String menuName) {
+        this.menuName = menuName;
     }
 
 }
