@@ -77,4 +77,14 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+
+    <declare-styleable name="DrawableTextView">
+        <attr name="drawableHeight" format="dimension"/>
+        <attr name="drawableWidth" format="dimension"/>
+    </declare-styleable>
+
+    <style name="PopupAnimation" parent="android:Animation" mce_bogus="1">
+        <item name="android:windowEnterAnimation">@anim/popw_show</item>
+        <item name="android:windowExitAnimation">@anim/popw_hide</item>
+    </style>
 </resources>

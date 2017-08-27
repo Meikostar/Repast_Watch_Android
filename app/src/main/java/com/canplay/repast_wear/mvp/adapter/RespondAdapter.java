@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.mvp.model.Message;
+import com.canplay.repast_wear.util.DateUtil;
 
 import java.util.List;
 
@@ -54,12 +55,14 @@ public class RespondAdapter extends BaseAdapter {
             convertView.setTag(holder);
         }else holder =(ViewHolder) convertView.getTag();
         Message message = messageList.get(position);
-        holder.tvContext.setText(message.getMenuName());
+        holder.tvContext.setText(message.getContent());
         holder.tableNumber.setText(message.getTableNo());
-//        holder.tvTime.setText(message.getPushId() == null ? "" : message.getPushId() + "");//暂时注掉
         if (type == 1) {//已完成
+            holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"前");
             holder.finished.setVisibility(View.VISIBLE);
             holder.imageNext.setVisibility(View.GONE);
+        }else {
+            holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"");
         }
         return convertView;
     }

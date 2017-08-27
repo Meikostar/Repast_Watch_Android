@@ -1,6 +1,7 @@
 package com.canplay.repast_wear.base;
 
 import android.app.Application;
+import android.app.Notification;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
@@ -9,6 +10,7 @@ import com.canplay.repast_wear.base.manager.AppManager;
 import com.canplay.repast_wear.util.ExceptionHandler;
 import com.canplay.repast_wear.util.JPushUtils;
 
+import cn.jpush.android.api.BasicPushNotificationBuilder;
 import cn.jpush.android.api.JPushInterface;
 
 /**
@@ -41,6 +43,9 @@ public class BaseApplication extends Application{
         JPushInterface.setLatestNotificationNumber(this, 1);
         String androidId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
         JPushUtils.shareInstance().setAlias(androidId);
+        BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder(this);
+        builder.notificationFlags = Notification.FLAG_AUTO_CANCEL
+                | Notification.FLAG_SHOW_LIGHTS;  //设置为自动消失和呼吸灯闪烁
         Log.e("---androidId----",androidId);
         this.cplayApplication = this;
     }

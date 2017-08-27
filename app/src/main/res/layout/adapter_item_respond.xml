@@ -25,18 +25,19 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="50px"
+                android:layout_centerHorizontal="true"
                 android:text="点餐"
                 android:textColor="@color/white"
-                android:textSize="18px" />
+                android:textSize="20px" />
 
             <ImageView
                 android:id="@+id/image_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="13dp"
-                android:src="@mipmap/right_go" />
+                android:layout_marginRight="10dp"
+                android:src="@drawable/arrow_right" />
 
             <TextView
                 android:id="@+id/tv_finish"

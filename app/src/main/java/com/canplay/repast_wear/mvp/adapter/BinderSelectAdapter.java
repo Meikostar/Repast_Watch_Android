@@ -1,6 +1,7 @@
 package com.canplay.repast_wear.mvp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,36 +11,42 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.canplay.repast_wear.R;
+import com.canplay.repast_wear.mvp.model.Table;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BinderSelectAdapter extends BaseAdapter {
 
-    private List<Map<String, Object>> objects;
+    private List<Table> tableList;
     private Context context;
     private LayoutInflater layoutInflater;
-    private boolean isSelect;
+    private boolean isSelect = true;
     private boolean canSelect;
+    private List<Long> tableIds = new ArrayList<>();
 
 
-    public BinderSelectAdapter(Context context, List<Map<String, Object>> objects) {
-        this.objects = objects;
+    public BinderSelectAdapter(Context context, List<Table> tableList) {
+        this.tableList = tableList;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
     }
 
-    @Override
-    public int getCount() {
-        return objects.size();
+    public List<Long> getTableIds() {
+        return tableIds;
     }
 
     @Override
-    public Map<String, Object> getItem(int position) {
-        return objects.get(position);
+    public int getCount() {
+        return tableList.size();
+    }
+
+    @Override
+    public Table getItem(int position) {
+        return tableList.get(position);
     }
 
     @Override
@@ -48,7 +55,7 @@ public class BinderSelectAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.adapter_item_table, null);
@@ -57,31 +64,74 @@ public class BinderSelectAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        final Map<String, Object> map = objects.get(position);
-        holder.tvName.setText(String.valueOf(map.get("tableNumber") + "号桌"));
-        final int type = (int) map.get("type");
-        if (type == 3) {
-            holder.toRight.setButtonDrawable(context.getResources().getDrawable(R.mipmap.no_select));
-            holder.toRight.setEnabled(false);
-        } else if (type == 1)
+        final Table table = tableList.get(position);
+        holder.tvName.setText(String.valueOf(table.getTableNo() + "号桌"));
+        final long type = table.getBound();
+        final long tableId = tableList.get(position).getTableId();
+        holder.toRight.setClickable(false);
+        if (type == 1) {
+            tableIds.add(tableId);
+            Log.e("tableIds自动   +  ",tableIds.toString());
             holder.toRight.setChecked(true);
-        else if(type == 0)
+        }
+        if (type == 0) {
             holder.toRight.setChecked(false);
-
+        }
         holder.contain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (type == 3) {
-                    return;
-                }
-                map.remove("type");
-                if (holder.toRight.isChecked()) {
-                    map.put("type", 0);
+                if(holder.toRight.isChecked()){
                     holder.toRight.setChecked(false);
-                } else {
-                    map.put("type", 1);
+                    if(tableIds.contains(tableId)){
+                        tableIds.remove(tableId);
+                        Log.e("点击了tableIds   -  ",tableIds.toString());
+                    }
+                }else {
                     holder.toRight.setChecked(true);
+                    if(!tableIds.contains(tableId)){
+                        tableIds.add(tableId);
+                        Log.e("点击了tableIds   +  ",tableIds.toString());
+                    }
                 }
+
+//                if (type == 1) {
+//                    if(isSelect){
+//                        holder.toRight.setChecked(false);
+//                        table.setBound(0);
+//                        if(tableIds.contains(tableId)){
+//                            tableIds.remove(tableId);
+//                            Log.e("点击了tableIds   -  ",tableIds.toString());
+//                        }
+//                        isSelect=false;
+//                    }else {
+//                        holder.toRight.setChecked(true);
+//                        table.setBound(1);
+//                        if(!tableIds.contains(tableId)){
+//                            tableIds.add(tableId);
+//                            Log.e("点击了tableIds   +  ",tableIds.toString());
+//                        }
+//                        isSelect=true;
+//                    }
+//                }
+//                if (type == 0) {
+//                    if(!isSelect){
+//                        holder.toRight.setChecked(true);
+//                        table.setBound(1);
+//                        if(!tableIds.contains(tableId)){
+//                            tableIds.add(tableId);
+//                            Log.e("点击了tableIds   +  ",tableIds.toString());
+//                        }
+//                        isSelect=true;
+//                    }else {
+//                        holder.toRight.setChecked(false);
+//                        table.setBound(0);
+//                        if(tableIds.contains(tableId)){
+//                            tableIds.remove(tableId);
+//                            Log.e("点击了tableIds   -  ",tableIds.toString());
+//                        }
+//                        isSelect=false;
+//                    }
+//                }
             }
         });
         return convertView;

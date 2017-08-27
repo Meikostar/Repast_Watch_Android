@@ -1,6 +1,9 @@
 package com.canplay.repast_wear.util;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -64,4 +67,74 @@ public class DateUtil {
         }
         return year + "年" + month + "月" + day + "日" + " " + hoursStr + ":" + minutesStr;
     }
+    /*时间戳转换成日期*/
+    public static String getDateToString(long time) {
+        Date d = new Date(time);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return sf.format(d);
+    }
+    /**
+     * 计算获得时间差
+     *
+     * @param newTime：本次获取的时间戳
+     * @param oldTime：上次获取的时间
+     * @return
+     */
+    public static String getTimeDistance(long newTime, long oldTime) {
+
+        String newString = getDateToString(newTime);
+        String oldString = getDateToString(oldTime);
+        // 计算的时间差
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String timedistance = null;
+        try {
+            Date d1 = df.parse(newString);
+            Date d2 = df.parse(oldString);
+            // 这样得到的差值是微秒级别
+            long diff = d1.getTime() - d2.getTime() > 0 ? d1.getTime() - d2.getTime() : d2.getTime() - d1.getTime();
+            long days = diff / (1000 * 60 * 60 * 24);
+            long hours = (diff - days * (1000 * 60 * 60 * 24))
+                    / (1000 * 60 * 60);
+            long minutes = (diff - days * (1000 * 60 * 60 * 24) - hours
+                    * (1000 * 60 * 60))
+                    / (1000 * 60);
+            long s = (diff / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
+            if (days == 0) {
+                if (hours == 0) {
+                    if (minutes == 0) {
+                        timedistance =s+ "秒";
+                        if(s == 0){
+                            timedistance ="1秒";
+                        }
+                    }else {
+                        timedistance = "" + minutes + "分"+s+ "秒";
+                    }
+                } else {
+                    if (minutes == 0) {
+                        timedistance = "" + hours + "小时";
+                    } else {
+                        timedistance = "" + hours + "小时" + minutes + "分"+s+ "秒";
+                    }
+                }
+            } else {
+                if (hours == 0) {
+                    if (minutes == 0) {
+                        timedistance = "" + days + "天";
+                    }else {
+                        timedistance = "" + days + "天" + minutes + "分"+s+ "秒";
+                    }
+                }else {
+                    if (minutes == 0) {
+                        timedistance = "" + days + "天" + hours + "小时"+s+ "秒";
+                    } else {
+                        timedistance = "" + days + "天" + hours + "小时" + minutes + "分"+s+ "秒";
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timedistance;
+    }
+
 }

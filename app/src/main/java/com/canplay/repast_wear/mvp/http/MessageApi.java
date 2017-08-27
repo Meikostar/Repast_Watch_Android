@@ -1,5 +1,10 @@
 package com.canplay.repast_wear.mvp.http;
 
+import com.canplay.repast_wear.mvp.model.DEVICE;
+import com.canplay.repast_wear.mvp.model.Resps;
+import com.canplay.repast_wear.mvp.model.Table;
+
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.http.POST;
@@ -8,16 +13,54 @@ import rx.Observable;
 
 
 public interface MessageApi {
+
+
     /**
-     * 获得消息数据
+     * 获取消息列表
+     * @param options
+     * @return
+     */
+    @POST("wx/getWatchMessageList")
+    Observable<Resps> getWatchMessageList(@QueryMap Map<String, String> options);
+
+    /**
+     * 完成
+     * @param options
+     * @return
+     */
+    @POST("wx/finishPushMessage")
+    Observable<String> finishPushMessage(@QueryMap Map<String, String> options);
+
+    /**
+     * 手表端推送（自动转移和手动转移）
      * @param options
      * @return
      */
     @POST("wx/watchPushMessage")
-    Observable<String> pushMessage(@QueryMap Map<String, String> options);
+    Observable<String> watchPushMessage(@QueryMap Map<String, String> options);
+
+    /**
+     * 重新绑定
+     * @param options
+     * @return
+     */
+    @POST("wx/deviceSignOut")
+    Observable<String> deviceSignOut(@QueryMap Map<String, String> options);
+
+    /**
+     * 获取转移的其他手表
+     * @param options
+     * @return
+     */
+    @POST("wx/getWatchList")
+    Observable<List<Table>> getWatchList(@QueryMap Map<String, String> options);
 
 
-    @POST("wx/finishPushMessage")
-    Observable<String> finishPushMessage(@QueryMap Map<String, String> options);
-
+    /**
+     * 绑定信息
+     * @param options
+     * @return
+     */
+    @POST("wx/deviceInfo")
+    Observable<DEVICE> deviceInfo(@QueryMap Map<String, String> options);
 }

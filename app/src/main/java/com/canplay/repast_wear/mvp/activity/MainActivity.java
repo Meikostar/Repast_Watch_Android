@@ -1,20 +1,19 @@
 package com.canplay.repast_wear.mvp.activity;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.base.BaseActivity;
@@ -23,6 +22,7 @@ import com.canplay.repast_wear.base.RxBus;
 import com.canplay.repast_wear.base.SubscriptionBean;
 import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
 import com.canplay.repast_wear.mvp.model.AccountManager;
+import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
@@ -58,6 +58,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private long pushId;//推送记录id
     private boolean isShow = false;
     private Message passMessage;
+    private String androidId;
+    private String tableNo;
 
     @Override
     public void initInjector() {
@@ -71,12 +73,15 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         ButterKnife.bind(this);
         TitleBarLayout titleBarView = getTitleBarView();
         titleBarView.setLeftArrowDisable();
-        sp = SpUtil.getInstance();
         titleBarView.setBackText(R.string.main_name);
-//        if (!sp.getBoolean("hasBinder")) {
-//            startActivity(new Intent(this, BinderActivity.class));
-//            finish();
-//        }
+        sp = SpUtil.getInstance();
+        androidId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        sp.putString("deviceCode", androidId);
+        if (!sp.getBoolean("hasBinder")) {
+            startActivity(new Intent(this, BinderActivity.class));
+            finish();
+        }
+        else messagePresenter.deviceInfo(androidId);
     }
 
     @Override
@@ -87,6 +92,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                 if (bean == null) return;
                 if (bean.type == SubscriptionBean.CHOOSE) {
                     Message message = (Message) bean.content;
+                    pushId = message.getPushId();
                     showJPushData(message);
                 }
             }
@@ -114,19 +120,23 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
     @Override
     public void onBackClick(View v) {
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle("切换店面").setMessage("是否改变店面绑定").setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                startActivity(new Intent(MainActivity.this, BinderActivity.class));
-                sp.putBoolean("hasBinder", false);
-                finish();
-            }
-        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        if (tableNo != null) {
+            toast = Toast.makeText(this, "当前绑定的桌号为：" + tableNo, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+//        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+//        alertDialogBuilder.setTitle("切换店面").setMessage("是否改变店面绑定").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                startActivity(new Intent(MainActivity.this, BinderActivity.class));
+//                sp.putBoolean("hasBinder", false);
+//                finish();
+//            }
+//        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        }).show();
     }
 
     public void showPop() {
@@ -135,7 +145,6 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         dialog.setContentView(contentView);
         TextView cancel = (TextView) contentView.findViewById(R.id.pop_cancel);
         TextView toLogin = (TextView) contentView.findViewById(R.id.pop_to_login);
-        TextView changePsw = (TextView) contentView.findViewById(R.id.pop_change_psw);
         TextView loginOut = (TextView) contentView.findViewById(R.id.pop_login_out);
         //获取焦点
         dialog.setFocusable(true);
@@ -156,23 +165,16 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+//                messagePresenter.deviceSignOut(androidId,"123456",3);//退出
                 finishAffinity();
             }
         });
         toLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                messagePresenter.deviceSignOut(androidId,"123456",2);//重新绑定
                 dialog.dismiss();
                 startActivity(new Intent(MainActivity.this, BinderActivity.class));
-                sp.putBoolean("hasBinder", false);
-                finish();
-            }
-        });
-        changePsw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-
             }
         });
     }
@@ -183,12 +185,15 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private TextView toOther;
     private TextView form;
     private TextView complain;
+    private TextView callList;
+    private TextView menuName;
+    private TextView clockTime;
 
     public void showJPushData(final Message message) {
         if (isShow) {
-            AccountManager.send(this,showtime,passMessage);//进行消息过度处理
-        }else {
-            passMessage=message;
+            AccountManager.send(this, showtime, passMessage);//进行消息过度处理
+        } else {
+            passMessage = message;
         }
         // 想设置震动大小可以通过改变pattern来设定，如果开启时间太短，震动效果可能感觉不到
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -199,18 +204,22 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         View view = inflater.inflate(R.layout.popwindow, null);
         if (window == null) {
             window = new PopupWindow(view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+            toOther = (TextView) view.findViewById(R.id.to_other);
+            form = (TextView) view.findViewById(R.id.former);
+            callList = (TextView) view.findViewById(R.id.call_list);
+            complain = (TextView) view.findViewById(R.id.complain);
+            menuName = (TextView) view.findViewById(R.id.menuName);
+            clockTime = (TextView) view.findViewById(R.id.clock_time);
         }
-        toOther = (TextView) view.findViewById(R.id.to_other);
-        form = (TextView) view.findViewById(R.id.former);
-        complain = (TextView) view.findViewById(R.id.complain);
-        final TextView clockTime = (TextView) view.findViewById(R.id.clock_time);
+        menuName.setText(message.getMenuName());
+        form.setText(message.getTableNo());
         //获取焦点
         window.setFocusable(true);
         window.setOutsideTouchable(true);
         //背景颜色
         window.setBackgroundDrawable(new ColorDrawable(0xffffff));
         //动画效果（进入页面和退出页面时的效果）
-        //window.setAnimationStyle(R.style.windows);
+        window.setAnimationStyle(R.style.PopupAnimation);
         //显示位置：showAtLocation(主布局所点击的按钮id, 位置, x, y);
         window.showAtLocation(MainActivity.this.findViewById(R.id.show), Gravity.CENTER, 0, 0);
         isShow = true;
@@ -228,7 +237,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                     isShow = false;
                     noRespond.add(message);//无应答
                     window.dismiss();
-                    sendMessage(0, message.getPushId());
+                    window = null;
+                    sendMessage(0, pushId);
                 }
             }.start();
         } else timer.start();
@@ -238,34 +248,80 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private void setPopListen(final Message message) {
         toOther.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                haveRespond.add(message);
-                window.dismiss();
+            public void onClick(View v) {//转移
                 Intent intent = new Intent(MainActivity.this, ToContactActivity.class);
-                intent.putExtra("pushId",message.getPushId());
-                startActivity(intent);
+                intent.putExtra("pushId", message.getPushId());
+                startActivityForResult(intent, 2);
             }
         });
         complain.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {//完成
+                messagePresenter.finishPushMessage(pushId, MainActivity.this);
                 window.dismiss();
+                timer.cancel();
+                window = null;
                 haveRespond.add(message);
+            }
+        });
+        callList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, RespondActivity.class));
             }
         });
     }
 
+    private long firstTime = 0;
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return super.onKeyDown(keyCode, event);
+    public <T> void toList(List<T> list, int type, int... refreshType) {
+
+    }
+
+    @Override
+    public <T> void toEntity(T entity) {
+        DEVICE device = (DEVICE) entity;
+        Log.e("device", device.toString());
+        tableNo = device.getTableNo();
+        if (device.getBound() == 0) startActivity(new Intent(this, BinderActivity.class));
+
+    }
+
+    @Override
+    public void toNextStep(int type) {
+        if (type==1) {
+            toast = Toast.makeText(this, "转移成功", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        if (type == 2) {
+            startActivity(new Intent(MainActivity.this, BinderActivity.class));
+            sp.putBoolean("hasBinder", false);
+            finish();
+        }
+        if (type == 3) {
+            finishAffinity();
+        }
     }
 
     @Override
     public void showTomast(String msg) {
-        showTomast(msg);
+
     }
 
     public void sendMessage(long tableId, long pushId) {
-        messagePresenter.pushMessage(tableId, pushId, this);
+        messagePresenter.watchPushMessage(tableId, pushId);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+            if(window!=null){
+                window.dismiss();
+                timer.cancel();
+                window = null;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

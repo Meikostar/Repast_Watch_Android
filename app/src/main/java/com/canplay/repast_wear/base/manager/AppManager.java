@@ -30,7 +30,7 @@ public class AppManager {
 
     private TelephonyManager tm;
     //获得imei编号
-    public static String imei = "";
+    public static String imei;
     //获得包信息
     public static PackageInfo info;
 
@@ -43,6 +43,7 @@ public class AppManager {
     private AppManager(Context context) {
         this.context = context;
         CanplayUtils.getDisplayMetrics(context);
+        imei=android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
     }
 
     public static AppManager getInstance(Context context) {

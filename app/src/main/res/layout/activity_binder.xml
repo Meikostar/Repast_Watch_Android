@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:drawableRight="@mipmap/right_go"
+                android:drawableRight="@drawable/arrow_right"
                 android:textColor="@color/white"
                 android:textSize="24px"
                 />
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:drawableRight="@mipmap/right_go"
+                android:drawableRight="@drawable/arrow_right"
                 android:textColor="@color/white"
                 android:textSize="24px" />
         </RelativeLayout>
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:drawableRight="@mipmap/right_go"
+                android:drawableRight="@drawable/arrow_right"
                 android:textColor="@color/white"
                 android:textSize="24px" />
         </RelativeLayout>
@@ -92,13 +92,14 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:drawableRight="@mipmap/right_go"
+                android:drawableRight="@drawable/arrow_right"
                 android:textColor="@color/white"
                 android:textSize="24px" />
         </RelativeLayout>
         <Button
             android:id="@+id/btn_next"
-            android:layout_width="200px"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
             android:layout_height="40px"
             android:textColor="@color/white"
             android:layout_gravity="center_horizontal"

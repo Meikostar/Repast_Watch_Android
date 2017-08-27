@@ -1,11 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <ListView
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.canplay.repast_wear.view.loadmore.XListView
         android:id="@+id/list_no_respond"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:divider="@null" >
+
+    </com.canplay.repast_wear.view.loadmore.XListView>
+   <!-- <com.canplay.repast_wear.view.materialRefresh.MaterialRefreshLayout
+        android:id="@+id/mSwipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        app:overlay="true"
+        app:isLoadMore="true"
+        app:progress_size_type="normal"
+        app:wave_color="#90ffffff"
+        app:wave_show="true"
+        app:progress_colors="@array/material_colors"
+        app:wave_height_type="normal">
+        <ListView
+            android:id="@+id/list_no_respond"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+    </com.canplay.repast_wear.view.materialRefresh.MaterialRefreshLayout>-->
+    <TextView
+        android:id="@+id/tv_null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="不存在未应答信息"
+        android:textColor="@color/round_hui"
+        android:visibility="gone"/>
+</RelativeLayout>

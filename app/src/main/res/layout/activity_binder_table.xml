@@ -13,11 +13,11 @@
         android:layout_height="166dp" />
     <Button
         android:id="@+id/btn_next"
-        android:layout_width="200px"
+        android:layout_width="match_parent"
         android:layout_height="40px"
         android:layout_marginBottom="20px"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/round_bg_org"
         android:layout_gravity="center_horizontal"
         android:text="完成"

@@ -1,5 +1,6 @@
 package com.canplay.repast_wear.mvp.http;
 
+import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.PROVINCE;
 import com.canplay.repast_wear.mvp.model.Table;
 
@@ -40,6 +41,7 @@ public interface TableApi {
      * @param options
      * @return
      */
-    @POST("wx/bondBusiness")
+    @POST("wx/watchBondBusiness")
     Observable<String> bondBusiness(@QueryMap Map<String, String> options);
+
 }

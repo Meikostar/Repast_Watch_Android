@@ -10,8 +10,16 @@ public class Table {
      */
     private long tableId;
     private String tableNo;
+    private String state;
     private int bound;
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getTableNo() {
         return tableNo;
@@ -37,4 +45,13 @@ public class Table {
         this.tableId = tableId;
     }
 
+    @Override
+    public String toString() {
+        return "Table{" +
+                "tableId=" + tableId +
+                ", tableNo='" + tableNo + '\'' +
+                ", state='" + state + '\'' +
+                ", bound=" + bound +
+                '}';
+    }
 }

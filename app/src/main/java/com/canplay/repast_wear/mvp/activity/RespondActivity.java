@@ -37,27 +37,25 @@ public class RespondActivity extends BaseActivity {
 
     @Override
     public void initInjector() {
+
+    }
+
+    @Override
+    public void initCustomerUI() {
         initUI(R.layout.activity_respond);
         ButterKnife.bind(this);
         TitleBarLayout titleBarView = getTitleBarView();
         titleBarView.setTvBackColor(R.color.green_cyc);
     }
-
     @Override
-    public void initCustomerUI() {
+    public void initOther() {
         fm = getSupportFragmentManager();
         fragmentList = new ArrayList<>();
         fragmentList.add(NoRespondFragment.newInstance());
         fragmentList.add(HaveRespondFragment.newInstance());
-//
         adapter = new ViewPagerAdapter(fm, fragmentList);
         viewpager.setAdapter(adapter);
         viewpager.setOnPageChangeListener(new TabOnPageChangeListener(this, viewpager, llContainer, 2));
-//
-    }
-
-    @Override
-    public void initOther() {
     }
 
     /**
