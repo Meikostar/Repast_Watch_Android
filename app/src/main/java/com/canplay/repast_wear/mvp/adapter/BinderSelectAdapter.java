@@ -81,12 +81,14 @@ public class BinderSelectAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if(holder.toRight.isChecked()){
+                    table.setBound(0);
                     holder.toRight.setChecked(false);
                     if(tableIds.contains(tableId)){
                         tableIds.remove(tableId);
                         Log.e("点击了tableIds   -  ",tableIds.toString());
                     }
                 }else {
+                    table.setBound(1);
                     holder.toRight.setChecked(true);
                     if(!tableIds.contains(tableId)){
                         tableIds.add(tableId);
