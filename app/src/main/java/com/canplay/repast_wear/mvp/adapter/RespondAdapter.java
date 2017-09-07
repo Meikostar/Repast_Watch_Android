@@ -1,6 +1,7 @@
 package com.canplay.repast_wear.mvp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,11 +59,16 @@ public class RespondAdapter extends BaseAdapter {
         holder.tvContext.setText(message.getContent());
         holder.tableNumber.setText(message.getTableNo());
         if (type == 1) {//已完成
+            Log.e("timeLong", ""+message.getTime());
+            Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
             holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"前");
+
             holder.finished.setVisibility(View.VISIBLE);
             holder.imageNext.setVisibility(View.GONE);
         }else {
-            holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"");
+            Log.e("timeLong", ""+message.getTime());
+            Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
+            holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"前");
         }
         return convertView;
     }

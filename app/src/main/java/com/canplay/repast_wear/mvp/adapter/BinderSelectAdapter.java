@@ -65,7 +65,7 @@ public class BinderSelectAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         final Table table = tableList.get(position);
-        holder.tvName.setText(String.valueOf(table.getTableNo() + "号桌"));
+        holder.tvName.setText(String.valueOf(table.getTableNo()));
         final long type = table.getBound();
         final long tableId = tableList.get(position).getTableId();
         holder.toRight.setClickable(false);

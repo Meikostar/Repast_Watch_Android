@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.base.manager.AppManager;
+import com.canplay.repast_wear.broadcastEvent.NetBroadcastReceiver;
 import com.canplay.repast_wear.permission.PermissionGen;
 import com.canplay.repast_wear.view.TitleBarLayout;
 
@@ -30,7 +33,7 @@ import butterknife.ButterKnife;
  * @Author: LLC
  * @Since:2015-3-19
  */
-public abstract class BaseActivity extends AppCompatActivity implements TitleBarLayout.OnRightBtnClickListener, TitleBarLayout.OnBackBtnClickListener{
+public abstract class BaseActivity extends AppCompatActivity implements TitleBarLayout.OnRightBtnClickListener, TitleBarLayout.OnBackBtnClickListener,NetBroadcastReceiver.NetEvent{
 
     private FrameLayout decorView;
 
@@ -41,6 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
     private TitleBarLayout titleBarView;
     private ProgressDialog pd;
     private Toolbar toolbar;
+    private NetBroadcastReceiver receiver;
 
     /**
      * 获取全局控制器
@@ -60,6 +64,13 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
         //添加activity
         AppManager.getInstance(this).addActivity(this);
         decorView = (FrameLayout) findViewById(Window.ID_ANDROID_CONTENT);
+        if (receiver == null) {
+            receiver = new NetBroadcastReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(receiver, filter);
+        }
+        receiver.setNetEvent(this);
         initInjector();
         initCustomerUI();
         ButterKnife.bind(this);
@@ -406,6 +417,17 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
         AppManager.getInstance(this).finishActivity(this);
     }
 
+    @Override
+    public void onNetChange(int netMobile) {
+        switch (netMobile) {
+            case 1://wifi
+                break;
+            case -1://没有网络
+                showToast("当前无网络连接，请检查网络！");
+                break;
+        }
+    }
+
     private String oldMsg;
     protected Toast toast = null;
     private long oneTime = 0;
@@ -445,6 +467,9 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
         if(toast != null){
             toast.cancel();
             toast = null;
+        }
+        if (receiver != null) {
+            unregisterReceiver(receiver);
         }
         super.onDestroy();
     }

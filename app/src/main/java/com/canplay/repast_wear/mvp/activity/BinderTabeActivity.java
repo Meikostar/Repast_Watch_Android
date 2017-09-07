@@ -30,7 +30,6 @@ public class BinderTabeActivity extends BaseActivity implements TableContract.Vi
     private ListView listTableMsg;
     private BinderSelectAdapter adapter;
     private List<Map<String, Object>> mapList = new ArrayList<>();;
-//    private List<String> selectTables=new ArrayList<>();
     private long businessId;
     private List<Table> tableList=new ArrayList<>();
     private SpUtil sp;
@@ -70,21 +69,6 @@ public class BinderTabeActivity extends BaseActivity implements TableContract.Vi
                 }
             }
         });
-//        listTableMsg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                if (type == 3) {
-//                    return;
-//                }
-//                if (holder.toRight.isChecked()) {
-//                    holder.toRight.setChecked(false);
-//                    table.setBound(0);
-//                } else {
-//                    holder.toRight.setChecked(true);
-//                    table.setBound(1);
-//                }
-//            }
-//        });
     }
     private void getSelectTable(){
         List<Long> tableIds = adapter.getTableIds();
@@ -101,6 +85,7 @@ public class BinderTabeActivity extends BaseActivity implements TableContract.Vi
             tablePresenter.bondBusiness(androidId,businessId,tableNos,this);
         }else{
             showToast("您还未绑定任何桌子");
+            isClike=true;
             return;
         }
     }
@@ -120,8 +105,8 @@ public class BinderTabeActivity extends BaseActivity implements TableContract.Vi
     @Override
     public void toNextStep(int type) {
         if(type == 2){
+            isClike=true;
             sp.putBoolean("hasBinder",true);
-//            setResult(RESULT_OK,getIntent());
             AppManager.getInstance(this).finishAllActivity();
             startActivity(new Intent(this, MainActivity.class));
             finish();

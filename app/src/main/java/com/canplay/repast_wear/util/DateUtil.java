@@ -70,7 +70,7 @@ public class DateUtil {
     /*时间戳转换成日期*/
     public static String getDateToString(long time) {
         Date d = new Date(time);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sf.format(d);
     }
     /**
@@ -85,33 +85,38 @@ public class DateUtil {
         String newString = getDateToString(newTime);
         String oldString = getDateToString(oldTime);
         // 计算的时间差
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timedistance = null;
         try {
             Date d1 = df.parse(newString);
             Date d2 = df.parse(oldString);
             // 这样得到的差值是微秒级别
             long diff = d1.getTime() - d2.getTime() > 0 ? d1.getTime() - d2.getTime() : d2.getTime() - d1.getTime();
+
+//            long days = diff / (24 * 60 * 60 * 1000);
+//            long hours = (diff / (60 * 60 * 1000) - days * 24);
+//            long minutes = ((diff / (60 * 1000)) - days * 24 * 60 - hours * 60);
+//            long s = (diff / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
+
+
             long days = diff / (1000 * 60 * 60 * 24);
-            long hours = (diff - days * (1000 * 60 * 60 * 24))
-                    / (1000 * 60 * 60);
-            long minutes = (diff - days * (1000 * 60 * 60 * 24) - hours
-                    * (1000 * 60 * 60))
-                    / (1000 * 60);
+            long hours = (diff - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+            long minutes = (diff/ (1000 * 60) - days * ( 60 * 24) - hours * 60) ;
             long s = (diff / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
             if (days == 0) {
                 if (hours == 0) {
                     if (minutes == 0) {
-                        timedistance =s+ "秒";
                         if(s == 0){
                             timedistance ="1秒";
+                        }else {
+                            timedistance =s+ "秒";
                         }
                     }else {
                         timedistance = "" + minutes + "分"+s+ "秒";
                     }
                 } else {
                     if (minutes == 0) {
-                        timedistance = "" + hours + "小时";
+                        timedistance = "" + hours + "小时"+s+ "秒";
                     } else {
                         timedistance = "" + hours + "小时" + minutes + "分"+s+ "秒";
                     }

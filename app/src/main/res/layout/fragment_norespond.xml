@@ -2,14 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.canplay.repast_wear.view.loadmore.XListView
-        android:id="@+id/list_no_respond"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null" >
+    <!--<com.canplay.repast_wear.view.loadmore.XListView-->
+        <!--android:id="@+id/list_no_respond"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:divider="@null" >-->
 
-    </com.canplay.repast_wear.view.loadmore.XListView>
+    <!--</com.canplay.repast_wear.view.loadmore.XListView>-->
    <!-- <com.canplay.repast_wear.view.materialRefresh.MaterialRefreshLayout
         android:id="@+id/mSwipeRefresh"
         android:layout_width="match_parent"
@@ -30,6 +31,17 @@
             android:layout_height="wrap_content">
         </ListView>
     </com.canplay.repast_wear.view.materialRefresh.MaterialRefreshLayout>-->
+    <me.guhy.swiperefresh.SwipeRefreshPlus
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mSwipeRefresh"
+        >
+        <ListView
+            android:id="@+id/list_no_respond"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"></ListView>
+    </me.guhy.swiperefresh.SwipeRefreshPlus>
     <TextView
         android:id="@+id/tv_null"
         android:layout_width="wrap_content"

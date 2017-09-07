@@ -23,7 +23,7 @@
             <ImageView
                 android:layout_width="100px"
                 android:layout_height="100px"
-                android:src="@mipmap/count" />
+                android:src="@drawable/count" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
             <ImageView
                 android:layout_width="100px"
                 android:layout_height="100px"
-                android:src="@mipmap/message" />
+                android:src="@drawable/message" />
 
             <TextView
                 android:layout_width="wrap_content"

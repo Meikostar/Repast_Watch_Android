@@ -39,11 +39,10 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:gravity="center"
+            android:layout_marginTop="6dp"
             android:padding="5dp"
             android:text="退出程序"
             android:textColor="@color/black" />
-
-
     </LinearLayout>
 
     <TextView

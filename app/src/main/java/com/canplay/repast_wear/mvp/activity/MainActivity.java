@@ -121,6 +121,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     @Override
     public void onBackClick(View v) {
         if (tableNo != null) {
+            Log.e("backclick  ","点击了显示桌号");
             toast = Toast.makeText(this, "当前绑定的桌号为：" + tableNo, Toast.LENGTH_SHORT);
             toast.show();
         }
@@ -283,8 +284,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     public <T> void toEntity(T entity) {
         DEVICE device = (DEVICE) entity;
         Log.e("device", device.toString());
-        tableNo = device.getTableNo();
         if (device.getBound() == 0) startActivity(new Intent(this, BinderActivity.class));
+        tableNo = device.getTableNo();
 
     }
 

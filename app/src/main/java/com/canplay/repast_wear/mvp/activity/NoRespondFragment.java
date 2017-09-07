@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +20,6 @@ import com.canplay.repast_wear.mvp.model.Resps;
 import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
 import com.canplay.repast_wear.util.SpUtil;
-import com.canplay.repast_wear.view.loadmore.XListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +29,18 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 
-public class NoRespondFragment extends BaseFragment implements MessageContract.View, XListView.IXListViewListener {
+public class NoRespondFragment extends BaseFragment implements MessageContract.View {
 
     @Inject
     MessagePresenter messagePresenter;
     @BindView(R.id.list_no_respond)
-    XListView listNoRespond;
+    ListView listNoRespond;
     @BindView(R.id.tv_null)
     TextView tvNull;
+    @BindView(R.id.mSwipeRefresh)
+    SwipeRefreshPlus mSwipeRefresh;
     //    @BindView(R.id.mSwipeRefresh)
 //    MaterialRefreshLayout mSwipeRefresh;
     private Unbinder unbinder;
@@ -52,6 +55,8 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     private int state = 1;//1：忽略的消息，2已完成
     private boolean isDownLoad;
     private boolean isFlash;
+    private boolean isLoadMore;
+    View noMoreView;
 
     public static NoRespondFragment newInstance() {
         NoRespondFragment fragment = new NoRespondFragment();
@@ -88,8 +93,48 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     }
 
     private void initData() {
-        listNoRespond.setPullLoadEnable(true);
-        listNoRespond.setXListViewListener(this);
+//        listNoRespond.setPullLoadEnable(true);
+//        listNoRespond.setXListViewListener(this);
+        mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary, R.color.red, R.color.green});
+        mSwipeRefresh.setLoadMoreColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
+            @Override
+            public void onPullDownToRefresh() {
+                mSwipeRefresh.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        messages.clear();//重新加载，清空
+                        pageNo = 1;
+                        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+                        mSwipeRefresh.setRefresh(false);
+                        mSwipeRefresh.showNoMore(false);
+                    }
+                }, 1000);
+            }
+
+            @Override
+            public void onPullUpToRefresh() {
+                mSwipeRefresh.setRefresh(true);
+                if (!isDownLoad) {
+                    mSwipeRefresh.showNoMore(true);
+                } else {
+                    mSwipeRefresh.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pageNo++;
+                            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+                            mSwipeRefresh.setLoadMore(false);
+                        }
+                    }, 1500);
+                }
+                mSwipeRefresh.setRefresh(false);
+            }
+        });
+        noMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.item_no_more, null, false);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        noMoreView.setPadding(10, 10, 10, 10);
+        mSwipeRefresh.setNoMoreView(noMoreView, layoutParams);
     }
 
     @Override
@@ -100,34 +145,34 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
 
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
-//
     }
 
     @Override
     public <T> void toEntity(T entity) {
-        if(isFlash){
-            isFlash=false;
+        if (isFlash) {
             messages.clear();
+            isFlash = false;
         }
         Resps resps = (Resps) entity;
+        Log.e("HaveRespondFragment---", resps.toString());
         List<Message> pushListResps = resps.getPushListResps();
-        Log.e("NoRespondFragment", resps.toString());
-        //1：忽略的消息，2已完成
+
         if (pushListResps == null || pushListResps.size() == 0) {
+            alert("已全部加载");
             if (messages.size() == 0) {
                 tvNull.setVisibility(View.VISIBLE);
             }
+            if (isLoadMore) {
+                isDownLoad = true;
+            }
         } else {
+            isLoadMore=true;
             tvNull.setVisibility(View.GONE);
             for (int i = 0; i < pushListResps.size(); i++) {
                 Message message = pushListResps.get(i);
                 messages.add(message);
             }
             adapter.notifyDataSetChanged();
-
-        }
-        if (isDownLoad) {
-            stop();
         }
     }
 
@@ -145,28 +190,28 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onRefresh() {
-        isFlash=true;
-        pageNo =  1;
-        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
-        if(isFlash){
-            listNoRespond.setRefreshTime("刚刚");
-        }
-        isDownLoad = true;
-    }
-
-    @Override
-    public void onLoadMore() {
-        pageNo = pageNo + 1;
-        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
-        isDownLoad = true;
-    }
-
-    private void stop() {
-        listNoRespond.stopRefresh();
-        listNoRespond.stopLoadMore();
-        isDownLoad=false;
-    }
+//    @Override
+//    public void onRefresh() {
+//        isFlash=true;
+//        pageNo =  1;
+//        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+//        if(isFlash){
+//            listNoRespond.setRefreshTime("刚刚");
+//        }
+//        isDownLoad = true;
+//    }
+//
+//    @Override
+//    public void onLoadMore() {
+//        pageNo = pageNo + 1;
+//        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+//        isDownLoad = true;
+//    }
+//
+//    private void stop() {
+//        listNoRespond.stopRefresh();
+//        listNoRespond.stopLoadMore();
+//        isDownLoad=false;
+//    }
 
 }
