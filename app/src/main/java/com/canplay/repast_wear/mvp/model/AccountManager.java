@@ -37,8 +37,8 @@ public class AccountManager {
                 if (activity != null) {
                     activity.sendMessage(0, passMessage.getPushId());
                 }
-                noRespond.add(passMessage);
-                haveRespond.remove(passMessage);
+//                noRespond.add(passMessage);
+//                haveRespond.remove(passMessage);
             }
         }.start();
     }

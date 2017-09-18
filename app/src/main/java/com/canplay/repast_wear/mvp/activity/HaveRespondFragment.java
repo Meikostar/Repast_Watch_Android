@@ -1,6 +1,7 @@
 package com.canplay.repast_wear.mvp.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ import butterknife.Unbinder;
 import me.guhy.swiperefresh.SwipeRefreshMode;
 import me.guhy.swiperefresh.SwipeRefreshPlus;
 
-
+//已应答(已完成)
 public class HaveRespondFragment extends BaseFragment implements MessageContract.View {
 
     @Inject
@@ -50,7 +51,7 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
     private Resps resps;
     private SpUtil spUtil;
     private String deviceCode;
-    private int pageSize = 6;//每页数
+    private int pageSize = 10;//每页数
     private int pageNo = 1;//当前页 首页传1
     private int state = 2;//1：忽略的消息，2已完成
     private boolean isDownLoad = true;
@@ -92,39 +93,58 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
         messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
         mSwipeRefresh.setScrollMode(SwipeRefreshMode.MODE_BOTH);
     }
-
+    Handler handler=new Handler();
+    Runnable runnable=new Runnable(){
+        @Override
+        public void run() {
+            pageNo++;
+            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+            mSwipeRefresh.setLoadMore(false);
+        }
+    };
+    Runnable run=new Runnable(){
+        @Override
+        public void run() {
+            messages.clear();//重新加载，清空
+            pageNo = 1;
+            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+            mSwipeRefresh.setRefresh(false);
+            mSwipeRefresh.showNoMore(false);
+        }
+    };
     private void initData() {
         mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
         mSwipeRefresh.setLoadMoreColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
-                mSwipeRefresh.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        messages.clear();//重新加载，清空
-                        pageNo = 1;
-                        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
-                        mSwipeRefresh.setRefresh(false);
-                        mSwipeRefresh.showNoMore(false);
-                    }
-                }, 1000);
+                handler.postDelayed(run, 1000);
+//                mSwipeRefresh.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        messages.clear();//重新加载，清空
+//                        pageNo = 1;
+//                        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+//                        mSwipeRefresh.setRefresh(false);
+//                        mSwipeRefresh.showNoMore(false);
+//                    }
+//                }, 1000);
             }
 
             @Override
             public void onPullUpToRefresh() {
-                mSwipeRefresh.setRefresh(true);
                 if (!isDownLoad) {
                     mSwipeRefresh.showNoMore(true);
                 } else {
-                    mSwipeRefresh.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            pageNo++;
-                            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
-                            mSwipeRefresh.setLoadMore(false);
-                        }
-                    }, 1500);
+                    handler.postDelayed(runnable, 1000);
+//                    mSwipeRefresh.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            pageNo++;
+//                            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+//                            mSwipeRefresh.setLoadMore(false);
+//                        }
+//                    }, 1000);
                 }
                 mSwipeRefresh.setRefresh(false);
             }
@@ -139,13 +159,14 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(run);
         unbinder.unbind();
+        super.onDestroyView();
     }
 
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
-
     }
 
     @Override

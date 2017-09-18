@@ -1,6 +1,7 @@
 package com.canplay.repast_wear.mvp.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,8 +30,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import me.guhy.swiperefresh.SwipeRefreshMode;
 import me.guhy.swiperefresh.SwipeRefreshPlus;
-
+//未应答
 public class NoRespondFragment extends BaseFragment implements MessageContract.View {
 
     @Inject
@@ -50,10 +52,10 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     private Resps resps;
     private SpUtil spUtil;
     private String deviceCode;
-    private int pageSize = 3;//每页数
+    private int pageSize = 10;//每页数
     private int pageNo = 1;//当前页 首页传1
     private int state = 1;//1：忽略的消息，2已完成
-    private boolean isDownLoad;
+    private boolean isDownLoad = true;
     private boolean isFlash;
     private boolean isLoadMore;
     View noMoreView;
@@ -90,42 +92,60 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
         adapter.setType(2);
         listNoRespond.setAdapter(adapter);
         messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+        mSwipeRefresh.setScrollMode(SwipeRefreshMode.MODE_BOTH);
     }
-
+    Handler handler=new Handler();
+    Runnable runnable=new Runnable(){
+        @Override
+        public void run() {
+            pageNo++;
+            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+            mSwipeRefresh.setLoadMore(false);
+        }
+    };
+    Runnable run=new Runnable(){
+        @Override
+        public void run() {
+            messages.clear();//重新加载，清空
+            pageNo = 1;
+            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+            mSwipeRefresh.setRefresh(false);
+            mSwipeRefresh.showNoMore(false);
+        }
+    };
     private void initData() {
-//        listNoRespond.setPullLoadEnable(true);
-//        listNoRespond.setXListViewListener(this);
-        mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary, R.color.red, R.color.green});
+        mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
         mSwipeRefresh.setLoadMoreColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
-                mSwipeRefresh.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        messages.clear();//重新加载，清空
-                        pageNo = 1;
-                        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
-                        mSwipeRefresh.setRefresh(false);
-                        mSwipeRefresh.showNoMore(false);
-                    }
-                }, 1000);
+                handler.postDelayed(run, 1000);
+//                mSwipeRefresh.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        messages.clear();//重新加载，清空
+//                        pageNo = 1;
+//                        messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+//                        mSwipeRefresh.setRefresh(false);
+//                        mSwipeRefresh.showNoMore(false);
+//                    }
+//                }, 1000);
             }
 
             @Override
             public void onPullUpToRefresh() {
-                mSwipeRefresh.setRefresh(true);
                 if (!isDownLoad) {
                     mSwipeRefresh.showNoMore(true);
                 } else {
-                    mSwipeRefresh.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            pageNo++;
-                            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
-                            mSwipeRefresh.setLoadMore(false);
-                        }
-                    }, 1500);
+                    handler.postDelayed(runnable, 1000);
+//                    mSwipeRefresh.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            pageNo++;
+//                            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
+//                            mSwipeRefresh.setLoadMore(false);
+//                        }
+//                    }, 1000);
                 }
                 mSwipeRefresh.setRefresh(false);
             }
@@ -139,8 +159,10 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(run);
         unbinder.unbind();
+        super.onDestroyView();
     }
 
     @Override

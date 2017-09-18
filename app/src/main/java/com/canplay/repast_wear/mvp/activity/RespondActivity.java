@@ -41,6 +41,17 @@ public class RespondActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackClick(View v) {
+//        v.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        finish();
+//                    }
+//                }, 1000);
+        super.onBackClick(v);
+    }
+
+    @Override
     public void initCustomerUI() {
         initUI(R.layout.activity_respond);
         ButterKnife.bind(this);

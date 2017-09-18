@@ -11,7 +11,6 @@ import com.canplay.repast_wear.base.BaseApplication;
 import com.canplay.repast_wear.base.manager.AppManager;
 import com.canplay.repast_wear.mvp.adapter.BinderSelectAdapter;
 import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
-import com.canplay.repast_wear.mvp.model.AccountManager;
 import com.canplay.repast_wear.mvp.model.Table;
 import com.canplay.repast_wear.mvp.present.TableContract;
 import com.canplay.repast_wear.mvp.present.TablePresenter;
@@ -94,7 +93,7 @@ public class BinderTabeActivity extends BaseActivity implements TableContract.Vi
     public <T> void toList(List<T> list, int type, int... refreshType) {
         tableList=(List<Table>)list;
         Log.e("后台数据为：",tableList.toString());
-        AccountManager.addTables(tableList);//数据进行临时存储
+//        AccountManager.addTables(tableList);//数据进行临时存储
         adapter = new BinderSelectAdapter(this, tableList);
         listTableMsg.setAdapter(adapter);
     }

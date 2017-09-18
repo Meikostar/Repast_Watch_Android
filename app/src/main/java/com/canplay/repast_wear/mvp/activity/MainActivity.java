@@ -29,7 +29,6 @@ import com.canplay.repast_wear.mvp.present.MessagePresenter;
 import com.canplay.repast_wear.util.SpUtil;
 import com.canplay.repast_wear.view.TitleBarLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,9 +49,6 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     LinearLayout llmessage;
     private Subscription mSubscription;
     private long showtime;//覆盖的时间
-    private List<PopupWindow> popupWindowList = new ArrayList<>();
-    private List<Message> haveRespond = new ArrayList<>();
-    private List<Message> noRespond = new ArrayList<>();
     private SpUtil sp;
     private long tableId;//桌子id （30s后自动转移情况传0，手动转移传桌子id）
     private long pushId;//推送记录id
@@ -166,14 +162,12 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-//                messagePresenter.deviceSignOut(androidId,"123456",3);//退出
                 finishAffinity();
             }
         });
         toLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                messagePresenter.deviceSignOut(androidId,"123456",2);//重新绑定
                 dialog.dismiss();
                 startActivity(new Intent(MainActivity.this, BinderActivity.class));
             }
@@ -235,11 +229,12 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
                 @Override
                 public void onFinish() {
-                    isShow = false;
-                    noRespond.add(message);//无应答
-                    window.dismiss();
-                    window = null;
-                    sendMessage(0, pushId);
+                    if(window != null){
+                        isShow = false;
+                        window.dismiss();
+                        window = null;
+                        sendMessage(0, pushId);
+                    }
                 }
             }.start();
         } else timer.start();
@@ -260,9 +255,9 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             public void onClick(View v) {//完成
                 messagePresenter.finishPushMessage(pushId, MainActivity.this);
                 window.dismiss();
+                isShow = false;
                 timer.cancel();
                 window = null;
-                haveRespond.add(message);
             }
         });
         callList.setOnClickListener(new View.OnClickListener() {
@@ -273,7 +268,6 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         });
     }
 
-    private long firstTime = 0;
 
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
@@ -285,7 +279,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         DEVICE device = (DEVICE) entity;
         Log.e("device", device.toString());
         if (device.getBound() == 0) startActivity(new Intent(this, BinderActivity.class));
-        tableNo = device.getTableNo();
+         tableNo = device.getTableNo();
 
     }
 
@@ -311,7 +305,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     }
 
     public void sendMessage(long tableId, long pushId) {
-        messagePresenter.watchPushMessage(tableId, pushId);
+        Log.e("pushId",pushId+"");
+        messagePresenter.watchPushMessage(pushId, tableId);
     }
 
     @Override
@@ -319,6 +314,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         if (requestCode == 2 && resultCode == RESULT_OK) {
             if(window!=null){
                 window.dismiss();
+                isShow = false;
                 timer.cancel();
                 window = null;
             }

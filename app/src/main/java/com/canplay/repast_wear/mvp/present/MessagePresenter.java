@@ -71,7 +71,7 @@ public class MessagePresenter implements MessageContract.Presenter {
     }
 
     @Override
-    public void watchPushMessage(long pushId,long tableId) {
+    public void watchPushMessage(long pushId, final long tableId) {
         Map<String, String> params = new TreeMap<>();
         params.put("pushId", pushId + "");
         params.put("tableId", tableId + "");
@@ -83,7 +83,11 @@ public class MessagePresenter implements MessageContract.Presenter {
 
             @Override
             public void onNext(String entity) {
-                mView.toNextStep(1);
+                if(tableId == 0){
+                    mView.toNextStep(4);
+                }else {
+                    mView.toNextStep(1);
+                }
             }
         });
     }
