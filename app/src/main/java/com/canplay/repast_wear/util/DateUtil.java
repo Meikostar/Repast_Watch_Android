@@ -31,6 +31,59 @@ public class DateUtil {
         return getDateLongToString(getTimeLong(), 4);
     }
 
+    public static boolean isLittle(long messageTime){
+        Long newTime = getTimeLong();
+        String newString = getDateToString(newTime);
+        String oldString = getDateToString(messageTime);
+        // 计算的时间差
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date d1 = df.parse(newString);
+            Date d2 = df.parse(oldString);
+            // 这样得到的差值是微秒级别
+            long diff = d1.getTime() - d2.getTime() > 0 ? d1.getTime() - d2.getTime() : d2.getTime() - d1.getTime();
+            long days = diff / (1000 * 60 * 60 * 24);
+            long hours = (diff - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+            long minutes = (diff/ (1000 * 60) - days * ( 60 * 24) - hours * 60) ;
+            long s = (diff / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
+            if(days==0&&hours==0&&minutes==0&&s<60){//设置时间差为60s
+                return true;
+            }else {
+                if(minutes==1&&s==0){
+                    return true;
+                }
+                return false;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public static long getLittleTime(long messageTime){
+        Long newTime = getTimeLong();
+        String newString = getDateToString(newTime);
+        String oldString = getDateToString(messageTime);
+        // 计算的时间差
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date d1 = df.parse(newString);
+            Date d2 = df.parse(oldString);
+            // 这样得到的差值是微秒级别
+            long diff = d1.getTime() - d2.getTime() > 0 ? d1.getTime() - d2.getTime() : d2.getTime() - d1.getTime();
+            long days = diff / (1000 * 60 * 60 * 24);
+            long hours = (diff - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+            long minutes = (diff/ (1000 * 60) - days * ( 60 * 24) - hours * 60) ;
+            long s = (diff / 1000 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);//计算出秒差（60s以内：现在时间的前一分钟都可以）
+            if(isLittle(messageTime)){
+                return 60-s;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+       return 0;
+    }
     /**
      * 将时间转化为年月日
      *

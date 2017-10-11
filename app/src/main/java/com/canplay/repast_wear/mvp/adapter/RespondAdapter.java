@@ -1,6 +1,7 @@
 package com.canplay.repast_wear.mvp.adapter;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ public class RespondAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
     private int type;
+    private CountDownTimer removetimer;
 
     public RespondAdapter(Context context, List<Message> messageList) {
         this.messageList = messageList;
@@ -49,7 +51,7 @@ public class RespondAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder ;
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.adapter_item_respond, null);
             holder = new ViewHolder(convertView);
@@ -58,17 +60,38 @@ public class RespondAdapter extends BaseAdapter {
         Message message = messageList.get(position);
         holder.tvContext.setText(message.getContent());
         holder.tableNumber.setText(message.getTableNo());
+        final String timeDistance = DateUtil.getTimeDistance(DateUtil.getTimeLong(), message.getTime());
         if (type == 1) {//已完成
             Log.e("timeLong", ""+message.getTime());
             Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
-            holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"前");
-
             holder.finished.setVisibility(View.VISIBLE);
             holder.imageNext.setVisibility(View.GONE);
+            holder.tvTime.setText(timeDistance+"前");
         }else {
+            if(DateUtil.isLittle(message.getTime())){//判断是否小于60s
+                holder.finished.setVisibility(View.VISIBLE);
+                holder.finished.setText("待处理...");
+                holder.imageNext.setVisibility(View.GONE);
+                long time = DateUtil.getLittleTime(message.getTime())*1000;
+                removetimer = new CountDownTimer(time, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+//                        holder.tvTime.setText((millisUntilFinished / 1000) + "");
+                    }
+                    @Override
+                    public void onFinish() {
+                        holder.finished.setVisibility(View.GONE);
+                        holder.imageNext.setVisibility(View.VISIBLE);
+//                        holder.tvTime.setText("已超出60s");
+                    }
+                }.start();
+            }else {
+                holder.imageNext.setVisibility(View.VISIBLE);
+                holder.finished.setVisibility(View.GONE);
+            }
+            holder.tvTime.setText(timeDistance+"前");
             Log.e("timeLong", ""+message.getTime());
             Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
-            holder.tvTime.setText(DateUtil.getTimeDistance(DateUtil.getTimeLong(),message.getTime())+"前");
         }
         return convertView;
     }

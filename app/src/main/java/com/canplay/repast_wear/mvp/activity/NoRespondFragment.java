@@ -1,5 +1,6 @@
 package com.canplay.repast_wear.mvp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.mvp.model.Resps;
 import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
+import com.canplay.repast_wear.util.DateUtil;
 import com.canplay.repast_wear.util.SpUtil;
 
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.guhy.swiperefresh.SwipeRefreshMode;
 import me.guhy.swiperefresh.SwipeRefreshPlus;
+
 //未应答
 public class NoRespondFragment extends BaseFragment implements MessageContract.View {
 
@@ -58,6 +62,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     private boolean isDownLoad = true;
     private boolean isFlash;
     private boolean isLoadMore;
+    private boolean canClick = true;
     View noMoreView;
 
     public static NoRespondFragment newInstance() {
@@ -93,9 +98,30 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
         listNoRespond.setAdapter(adapter);
         messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
         mSwipeRefresh.setScrollMode(SwipeRefreshMode.MODE_BOTH);
+        setLisenter();
     }
-    Handler handler=new Handler();
-    Runnable runnable=new Runnable(){
+
+    private void setLisenter() {
+        listNoRespond.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Message message = messages.get(position);
+                if (message == null || !canClick) {
+                    return;
+                }
+                long messageTime = message.getTime();
+                if (DateUtil.isLittle(messageTime)) {
+                    Intent intent = new Intent(activity, ToContactActivity.class);
+                    intent.putExtra("pushId", message.getPushId());
+                    startActivityForResult(intent, 2);
+                }
+            }
+        });
+
+    }
+
+    Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
         @Override
         public void run() {
             pageNo++;
@@ -103,19 +129,21 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
             mSwipeRefresh.setLoadMore(false);
         }
     };
-    Runnable run=new Runnable(){
+    Runnable run = new Runnable() {
         @Override
         public void run() {
-            messages.clear();//重新加载，清空
+//            messages.clear();//重新加载，清空
+            isFlash=true;
             pageNo = 1;
             messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
             mSwipeRefresh.setRefresh(false);
             mSwipeRefresh.showNoMore(false);
         }
     };
+
     private void initData() {
-        mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
-        mSwipeRefresh.setLoadMoreColorResources(new int[]{R.color.colorPrimary,R.color.red, R.color.green});
+        mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary, R.color.red, R.color.green});
+        mSwipeRefresh.setLoadMoreColorResources(new int[]{R.color.colorPrimary, R.color.red, R.color.green});
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
@@ -171,6 +199,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
 
     @Override
     public <T> void toEntity(T entity) {
+        canClick = true;
         if (isFlash) {
             messages.clear();
             isFlash = false;
@@ -188,7 +217,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
                 isDownLoad = true;
             }
         } else {
-            isLoadMore=true;
+            isLoadMore = true;
             tvNull.setVisibility(View.GONE);
             for (int i = 0; i < pushListResps.size(); i++) {
                 Message message = pushListResps.get(i);
@@ -210,6 +239,20 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
 
     public void alert(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == activity.RESULT_OK) {
+            Log.e("haha", "-----重新刷新了！---------");
+            canClick = false;
+            isFlash = true;
+            messages.clear();//重新加载，清空
+            adapter.notifyDataSetChanged();
+            pageNo = 1;
+            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());//转移消息之后刷新
+        }
     }
 
 //    @Override

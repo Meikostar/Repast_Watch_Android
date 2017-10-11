@@ -228,10 +228,12 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                 }
 
                 @Override
-                public void onFinish() {
+                public void onFinish() {//自动转移
                     if(window != null){
                         isShow = false;
-                        window.dismiss();
+                        if(window.isShowing()){
+                            window.dismiss();
+                        }
                         window = null;
                         sendMessage(0, pushId);
                     }

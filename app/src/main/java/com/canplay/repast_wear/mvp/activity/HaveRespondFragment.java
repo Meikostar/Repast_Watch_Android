@@ -105,7 +105,8 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
     Runnable run=new Runnable(){
         @Override
         public void run() {
-            messages.clear();//重新加载，清空
+//            messages.clear();//重新加载，清空
+            isFlash=true;
             pageNo = 1;
             messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
             mSwipeRefresh.setRefresh(false);
