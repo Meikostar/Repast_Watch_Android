@@ -11,7 +11,28 @@ public class Table {
     private long tableId;
     private String tableNo;
     private String state;
+
+    private String name;
+
     private int bound;
+
+    private String watchCode;
+
+    public String getWatchCode() {
+        return watchCode;
+    }
+
+    public void setWatchCode(String watchCode) {
+        this.watchCode = watchCode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getState() {
         return state;
@@ -51,6 +72,8 @@ public class Table {
                 "tableId=" + tableId +
                 ", tableNo='" + tableNo + '\'' +
                 ", state='" + state + '\'' +
+                ", watchCode='" + watchCode + '\'' +
+                ", name='" + name + '\'' +
                 ", bound=" + bound +
                 '}';
     }

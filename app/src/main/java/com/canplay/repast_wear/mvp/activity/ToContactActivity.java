@@ -1,6 +1,8 @@
 package com.canplay.repast_wear.mvp.activity;
 
+import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,12 +28,16 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.guhy.swiperefresh.SwipeRefreshMode;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 
 public class ToContactActivity extends BaseActivity implements MessageContract.View {
     @Inject
     MessagePresenter presenter;
     @BindView(R.id.list_to_other)
     GridView listToOther;
+    @BindView(R.id.mSwipeRefresh)
+    SwipeRefreshPlus mSwipeRefresh;
     private List<Table> nameList = new ArrayList<>();
     private ListAdapter adapter;
     private TextView name;
@@ -39,6 +45,14 @@ public class ToContactActivity extends BaseActivity implements MessageContract.V
     private SpUtil sp;
     private String deviceCode;
     private String businessId;
+
+    private int pageSize = 20;//每页数
+    private int pageIndex =1;//当前页 首页传1
+
+    private boolean isDownLoad = true;
+    private boolean isFlash;
+    private boolean isLoadMore;
+    View noMoreView;
 
     @Override
     public void initInjector() {
@@ -53,9 +67,28 @@ public class ToContactActivity extends BaseActivity implements MessageContract.V
 
     @Override
     public void initCustomerUI() {
-        presenter.getWatchList(deviceCode, businessId, this);
-
+        presenter.getWatchList(deviceCode, businessId,pageSize,pageIndex,this);
+        mSwipeRefresh.setScrollMode(SwipeRefreshMode.MODE_LOADMODE);
     }
+    Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            pageIndex++;
+            presenter.getWatchList(deviceCode, businessId,pageSize,pageIndex,ToContactActivity.this);
+            mSwipeRefresh.setLoadMore(false);
+        }
+    };
+    Runnable run = new Runnable() {
+        @Override
+        public void run() {
+            isFlash=true;
+            pageIndex = 1;
+            presenter.getWatchList(deviceCode, businessId,pageSize,pageIndex,ToContactActivity.this);
+            mSwipeRefresh.setRefresh(false);
+            mSwipeRefresh.showNoMore(false);
+        }
+    };
 
     @Override
     public void initOther() {
@@ -67,44 +100,73 @@ public class ToContactActivity extends BaseActivity implements MessageContract.V
                 if (nameList.get(position).getState().equals("1")) {
                     return;
                 }
-                presenter.watchPushMessage(pushId, nameList.get(position).getTableId());
+                presenter.watchPushMessage(pushId, nameList.get(position).getWatchCode());
             }
         });
+        mSwipeRefresh.setRefreshColorResources(new int[]{R.color.colorPrimary, R.color.red, R.color.green});
+        mSwipeRefresh.setLoadMoreColorResources(new int[]{R.color.colorPrimary, R.color.red, R.color.green});
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
+            @Override
+            public void onPullDownToRefresh() {
+//                handler.postDelayed(run, 1000);
+            }
+
+            @Override
+            public void onPullUpToRefresh() {
+                if (!isDownLoad) {
+                    toast = Toast.makeText(ToContactActivity.this, "已全部加载!", Toast.LENGTH_SHORT);
+                    mSwipeRefresh.showNoMore(true);
+                } else {
+                    handler.postDelayed(runnable, 500);
+                }
+                mSwipeRefresh.setRefresh(false);
+            }
+        });
+        noMoreView = LayoutInflater.from(this).inflate(R.layout.item_no_more, null, false);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        noMoreView.setPadding(10, 10, 10, 10);
+        mSwipeRefresh.setNoMoreView(noMoreView, layoutParams);
     }
 
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
-        if (type == 1) {
-            nameList = (List<Table>) list;
-            adapter = new ArrayAdapter(this, R.layout.adapter_select_man, R.id.tv_name, nameList) {
-
-
-                @Override
-                public View getView(int position,
-                                    View convertView, ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-                    name = (TextView) view.findViewById(R.id.tv_name);
-                    name.setText(nameList.get(position).getTableNo());
-                    TextView checkbox = (TextView) view.findViewById(R.id.checkbox);
-                    if (nameList.get(position).getState().equals("1")) {
-                        checkbox.setBackground(getResources().getDrawable(R.drawable.org_cycle));
-                    }
-                    return view;
+        List<Table> tables = (List<Table>) list;
+        if(tables.size() == 0){
+            isDownLoad =false;
+            return;
+        }
+        nameList.addAll(tables);
+        adapter = new ArrayAdapter(this, R.layout.adapter_select_man, R.id.tv_name, nameList) {
+            @Override
+            public View getView(int position,
+                                View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                name = (TextView) view.findViewById(R.id.tv_name);
+                name.setText(nameList.get(position).getName());
+                TextView checkbox = (TextView) view.findViewById(R.id.checkbox);
+                if (nameList.get(position).getState().equals("1")) {
+                    checkbox.setBackground(getResources().getDrawable(R.drawable.org_cycle));
                 }
-            };
-            listToOther.setAdapter(adapter);
+                return view;
+            }
+        };
+        listToOther.setAdapter(adapter);
+        if (type == 1) {//有下一页
+            isDownLoad =true;
+        }else if (type == 0) {
+            isDownLoad =false;
         }
         Log.e("table", nameList.toString());
     }
 
     @Override
     public <T> void toEntity(T entity) {
-
     }
 
     @Override
     public void toNextStep(int type) {
-        if (type==1) {
+        if (type==403) {
             toast = Toast.makeText(this, "转移成功", Toast.LENGTH_SHORT);
             toast.show();
             setResult(RESULT_OK,getIntent());

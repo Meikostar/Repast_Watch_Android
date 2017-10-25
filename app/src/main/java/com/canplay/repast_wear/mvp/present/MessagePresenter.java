@@ -8,10 +8,9 @@ import com.canplay.repast_wear.base.manager.ApiManager;
 import com.canplay.repast_wear.mvp.http.MessageApi;
 import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Resps;
-import com.canplay.repast_wear.mvp.model.Table;
+import com.canplay.repast_wear.mvp.model.RespsTable;
 import com.canplay.repast_wear.net.MySubscriber;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -47,7 +46,8 @@ public class MessagePresenter implements MessageContract.Presenter {
 
             @Override
             public void onNext(Resps entity) {
-                mView.toEntity(entity);
+                mView.toList(entity.getPushListResps(),entity.getHasNext());
+//                mView.toEntity(entity);
             }
         });
     }
@@ -71,10 +71,10 @@ public class MessagePresenter implements MessageContract.Presenter {
     }
 
     @Override
-    public void watchPushMessage(long pushId, final long tableId) {
+    public void watchPushMessage(long pushId, String deviceCode) {
         Map<String, String> params = new TreeMap<>();
         params.put("pushId", pushId + "");
-        params.put("tableId", tableId + "");
+        params.put("deviceCode", deviceCode );
         subscription = ApiManager.setSubscribe(messageApi.watchPushMessage(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
             @Override
             public void onError(Throwable e) {
@@ -83,11 +83,7 @@ public class MessagePresenter implements MessageContract.Presenter {
 
             @Override
             public void onNext(String entity) {
-                if(tableId == 0){
-                    mView.toNextStep(4);
-                }else {
-                    mView.toNextStep(1);
-                }
+                mView.toNextStep(403);
             }
         });
     }
@@ -108,14 +104,31 @@ public class MessagePresenter implements MessageContract.Presenter {
         });
     }
     @Override
-    public void deviceSignOut(String deviceCode, String psw, final int type) {
+    public void getInit(String deviceCode) {
         Map<String, String> params = new TreeMap<>();
         params.put("deviceCode", deviceCode + "");
-        params.put("psw", psw + "");
-        subscription = ApiManager.setSubscribe(messageApi.deviceSignOut(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
+        subscription = ApiManager.setSubscribe(messageApi.getInit(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
+            }
+
+            @Override
+            public void onNext(String entity) {
+                mView.toEntity(entity);
+            }
+        });
+    }
+    @Override
+    public void deviceSignOut(String deviceCode, String psw, final int type) {
+        Map<String, String> params = new TreeMap<>();
+        params.put("deviceCode", deviceCode + "");
+        params.put("pwd", psw + "");
+        subscription = ApiManager.setSubscribe(messageApi.deviceSignOut(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
+            @Override
+            public void onError(Throwable e) {
+                mView.toNextStep(4);//密码错误处理
+//                super.onError(e);
             }
 
             @Override
@@ -128,20 +141,38 @@ public class MessagePresenter implements MessageContract.Presenter {
         });
     }
     @Override
-    public void getWatchList(String deviceCode, String businessId, final Context context) {
+    public void deletePushInfo(long pushId) {
         Map<String, String> params = new TreeMap<>();
-        params.put("deviceCode", deviceCode + "");
-        params.put("businessId", businessId + "");
-        subscription = ApiManager.setSubscribe(messageApi.getWatchList(ApiManager.getParameters(params, true)), new MySubscriber<List<Table>>() {
+        params.put("pushId", pushId + "");
+        subscription = ApiManager.setSubscribe(messageApi.deletePushInfo(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onNext(List<Table> list ) {
-                mView.toList(list,1);
+            public void onNext(String entity) {
+            }
+        });
+    }
+    @Override
+    public void getWatchList(String deviceCode, String businessId,int pageSize,int pageIndex, final Context context) {
+        Map<String, String> params = new TreeMap<>();
+        params.put("deviceCode", deviceCode + "");
+        params.put("businessId", businessId + "");
+        params.put("pageSize", pageSize + "");
+        params.put("pageIndex", pageIndex + "");
+        subscription = ApiManager.setSubscribe(messageApi.getWatchList(ApiManager.getParameters(params, true)), new MySubscriber<RespsTable>() {
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+//                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onNext(RespsTable list ) {
+//                mView.toEntity(list);
+//                mView.toNextStep(list.getHasNext());
+                mView.toList(list.getList(),list.getHasNext());
             }
         });
     }

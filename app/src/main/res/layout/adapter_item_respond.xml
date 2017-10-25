@@ -18,6 +18,17 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="32dp">
+            <TextView
+                android:id="@+id/table_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textSize="20px"
+                android:gravity="center"
+                android:text="01fff"
+                android:textColor="#27cd41" />
 
             <TextView
                 android:id="@+id/tv_context"
@@ -37,7 +48,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/arrow_right" />
+                android:src="@drawable/arrow_right"
+                />
 
             <TextView
                 android:id="@+id/tv_finish"
@@ -45,17 +57,31 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="13dp"
-                android:text="已完成"
-                android:textColor="@color/color9"
-                android:textSize="18px"
+                android:layout_marginRight="10dp"
+                android:text="x"
+                android:textColor="@color/white"
+                android:textSize="16px"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
                 android:visibility="gone"
                 />
+            <!--<TextView-->
+                <!--android:id="@+id/tv_finish"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="13dp"-->
+                <!--android:text="已完成"-->
+                <!--android:textColor="@color/color9"-->
+                <!--android:textSize="14px"-->
+                <!--android:visibility="gone"-->
+                <!--/>-->
         </RelativeLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0.2dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginBottom="10px"
             android:layout_marginTop="4dp"
             android:layout_marginRight="10px"
@@ -70,13 +96,14 @@
             android:text="1分10秒前"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/table_number"
-        android:layout_width="44px"
-        android:layout_height="44px"
-        android:layout_marginLeft="24dp"
-        android:background="@drawable/double_cycle"
-        android:gravity="center"
-        android:text="01"
-        android:textColor="@color/white" />
+    <!--<TextView-->
+        <!--android:id="@+id/table_number"-->
+        <!--android:layout_width="44px"-->
+        <!--android:layout_height="44px"-->
+        <!--android:layout_marginLeft="24dp"-->
+        <!--android:background="@drawable/double_cycle"-->
+        <!--android:textSize="10sp"-->
+        <!--android:gravity="center"-->
+        <!--android:text="01fff"-->
+        <!--android:textColor="@color/white" />-->
 </RelativeLayout>

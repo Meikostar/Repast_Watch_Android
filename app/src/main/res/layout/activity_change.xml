@@ -2,14 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:layout_gravity="center_horizontal">
-<GridView
-    android:id="@+id/list_to_other"
-    android:layout_marginLeft="10px"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:numColumns="2"
-    >
-</GridView>
+    android:layout_gravity="center_horizontal"
+    android:background="@color/black">
+
+    <me.guhy.swiperefresh.SwipeRefreshPlus
+        android:id="@+id/mSwipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridView
+            android:id="@+id/list_to_other"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10px"
+            android:numColumns="2"/>
+    </me.guhy.swiperefresh.SwipeRefreshPlus>
 </LinearLayout>

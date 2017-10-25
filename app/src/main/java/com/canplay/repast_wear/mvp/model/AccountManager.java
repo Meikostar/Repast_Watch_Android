@@ -35,7 +35,7 @@ public class AccountManager {
             public void onFinish() {
                 //自动转移到其他设备
                 if (activity != null) {
-                    activity.sendMessage(0, passMessage.getPushId());
+//                    activity.sendMessage(0, passMessage.getPushId());
                 }
 //                noRespond.add(passMessage);
 //                haveRespond.remove(passMessage);

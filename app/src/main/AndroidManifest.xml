@@ -44,6 +44,7 @@
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".base.BaseApplication"
@@ -51,6 +52,8 @@
         android:icon="@mipmap/yjlogo"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:largeHeap="true"
+        android:persistent="true"
         android:theme="@style/AppTheme">
         <activity android:name=".mvp.activity.BinderActivity">
         </activity>
@@ -58,7 +61,8 @@
         <activity android:name=".mvp.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                    <category android:name="android.intent.category.HOME" />
+                    <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -189,6 +193,14 @@
         <activity android:name=".mvp.activity.RespondActivity" />
         <activity android:name=".mvp.activity.BinderTabeActivity"/>
         <activity android:name=".mvp.activity.BaseAdressActivity"/>
+
+        <receiver android:name=".net.BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

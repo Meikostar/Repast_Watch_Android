@@ -63,6 +63,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     private boolean isFlash;
     private boolean isLoadMore;
     private boolean canClick = true;
+    private boolean isFirst  = true;
     View noMoreView;
 
     public static NoRespondFragment newInstance() {
@@ -133,7 +134,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
         @Override
         public void run() {
 //            messages.clear();//重新加载，清空
-            isFlash=true;
+            isFlash = true;
             pageNo = 1;
             messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
             mSwipeRefresh.setRefresh(false);
@@ -163,6 +164,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
             @Override
             public void onPullUpToRefresh() {
                 if (!isDownLoad) {
+                    alert("已全部加载");
                     mSwipeRefresh.showNoMore(true);
                 } else {
                     handler.postDelayed(runnable, 1000);
@@ -195,6 +197,24 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
 
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
+        canClick = true;
+        if (isFlash) {
+            messages.clear();
+            isFlash = false;
+        }
+        List<Message> pushListResps = (List<Message>) list;
+        isLoadMore = true;
+        tvNull.setVisibility(View.GONE);
+        messages.addAll(pushListResps);
+        adapter.notifyDataSetChanged();
+        if (messages.size() == 0) {
+            tvNull.setVisibility(View.VISIBLE);
+        }
+        if (type == 1) {//有下一页
+            isDownLoad=true;
+        } else if (type == 0) {
+            isDownLoad = false;
+        }
     }
 
     @Override
@@ -209,7 +229,10 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
         List<Message> pushListResps = resps.getPushListResps();
 
         if (pushListResps == null || pushListResps.size() == 0) {
-            alert("已全部加载");
+            if(!isFirst){
+                alert("已全部加载");
+                isFirst = false;
+            }
             if (messages.size() == 0) {
                 tvNull.setVisibility(View.VISIBLE);
             }

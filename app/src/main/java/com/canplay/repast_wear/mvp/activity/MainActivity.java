@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -21,7 +24,6 @@ import com.canplay.repast_wear.base.BaseApplication;
 import com.canplay.repast_wear.base.RxBus;
 import com.canplay.repast_wear.base.SubscriptionBean;
 import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
-import com.canplay.repast_wear.mvp.model.AccountManager;
 import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.mvp.present.MessageContract;
@@ -56,6 +58,9 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private Message passMessage;
     private String androidId;
     private String tableNo;
+    private PopupWindow popSignOut;
+    private EditText editText;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public void initInjector() {
@@ -76,19 +81,26 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         if (!sp.getBoolean("hasBinder")) {
             startActivity(new Intent(this, BinderActivity.class));
             finish();
+        } else {
+//            messagePresenter.deviceInfo(androidId);
         }
-        else messagePresenter.deviceInfo(androidId);
+//        messagePresenter.getInit(androidId);
     }
 
     @Override
     public void initOther() {
+        PowerManager pm = (PowerManager) MainActivity.this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "SimpleTimer");
         mSubscription = RxBus.getInstance().toObserverable(SubscriptionBean.RxBusSendBean.class).subscribe(new Action1<SubscriptionBean.RxBusSendBean>() {
             @Override
             public void call(SubscriptionBean.RxBusSendBean bean) {
                 if (bean == null) return;
-                if (bean.type == SubscriptionBean.CHOOSE) {
+                 if (bean.type == SubscriptionBean.CHOOSE) {
                     Message message = (Message) bean.content;
                     pushId = message.getPushId();
+                    if (wakeLock!=null){
+                        wakeLock.acquire();
+                    }
                     showJPushData(message);
                 }
             }
@@ -117,7 +129,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     @Override
     public void onBackClick(View v) {
         if (tableNo != null) {
-            Log.e("backclick  ","点击了显示桌号");
+            Log.e("backclick  ", "点击了显示桌号");
             toast = Toast.makeText(this, "当前绑定的桌号为：" + tableNo, Toast.LENGTH_SHORT);
             toast.show();
         }
@@ -162,7 +174,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                finishAffinity();
+                showSignOut();
+//                finishAffinity();
             }
         });
         toLogin.setOnClickListener(new View.OnClickListener() {
@@ -185,11 +198,14 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private TextView clockTime;
 
     public void showJPushData(final Message message) {
-        if (isShow) {
-            AccountManager.send(this, showtime, passMessage);//进行消息过度处理
-        } else {
-            passMessage = message;
+        if (wakeLock!=null){
+            wakeLock.release();
         }
+//        if (isShow) {                       //注释：取消30秒后自动调用转移接口
+//            AccountManager.send(this, showtime, passMessage);//进行消息过度处理
+//        } else {
+//            passMessage = message;
+//        }
         // 想设置震动大小可以通过改变pattern来设定，如果开启时间太短，震动效果可能感觉不到
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {100, 400, 100, 400}; // 停止 开启 停止 开启
@@ -229,19 +245,20 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
                 @Override
                 public void onFinish() {//自动转移
-                    if(window != null){
+                    if (window != null) {
                         isShow = false;
-                        if(window.isShowing()){
+                        if (window.isShowing()) {
                             window.dismiss();
                         }
                         window = null;
-                        sendMessage(0, pushId);
+//                        sendMessage(0, pushId);   //注释：取消30秒后自动调用转移接口
                     }
                 }
             }.start();
         } else timer.start();
         setPopListen(message);
     }
+
 
     private void setPopListen(final Message message) {
         toOther.setOnClickListener(new View.OnClickListener() {
@@ -281,13 +298,13 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         DEVICE device = (DEVICE) entity;
         Log.e("device", device.toString());
         if (device.getBound() == 0) startActivity(new Intent(this, BinderActivity.class));
-         tableNo = device.getTableNo();
+        tableNo = device.getTableNo();
 
     }
 
     @Override
     public void toNextStep(int type) {
-        if (type==1) {
+        if (type == 1) {
             toast = Toast.makeText(this, "转移成功", Toast.LENGTH_SHORT);
             toast.show();
         }
@@ -297,7 +314,13 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             finish();
         }
         if (type == 3) {
+            popSignOut.dismiss();
             finishAffinity();
+        }
+        if (type == 4) {
+            toast = Toast.makeText(this, "密码错误!", Toast.LENGTH_SHORT);
+            toast.show();
+            editText.setText("");
         }
     }
 
@@ -306,15 +329,15 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
     }
 
-    public void sendMessage(long tableId, long pushId) {
-        Log.e("pushId",pushId+"");
-        messagePresenter.watchPushMessage(pushId, tableId);
-    }
+//    public void sendMessage(long tableId, long pushId) {
+//        Log.e("pushId", pushId + "");
+//        messagePresenter.watchPushMessage(pushId, tableId);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 2 && resultCode == RESULT_OK) {
-            if(window!=null){
+            if (window != null) {
                 window.dismiss();
                 isShow = false;
                 timer.cancel();
@@ -322,5 +345,52 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void showSignOut() {
+        View contentView = LayoutInflater.from(this).inflate(R.layout.pop_signout, null);
+        popSignOut = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        popSignOut.setContentView(contentView);
+
+        editText = (EditText) contentView.findViewById(R.id.et_psw);
+        TextView tvCancel = (TextView) contentView.findViewById(R.id.tv_cancel);
+        TextView tvSure = (TextView) contentView.findViewById(R.id.tv_sure);
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popSignOut.dismiss();
+            }
+        });
+        tvSure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String password = editText.getText().toString();
+                if (password.equals("")&&password.length() == 0) {
+                    toast = Toast.makeText(MainActivity.this, "输入密码不能为空!", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    messagePresenter.deviceSignOut(androidId, password, 3);
+                }
+            }
+        });
+        //获取焦点
+        popSignOut.setFocusable(true);
+        popSignOut.setOutsideTouchable(true);
+        //背景颜色
+        popSignOut.setBackgroundDrawable(new ColorDrawable(0xffffff));
+        //动画效果（进入页面和退出页面时的效果）
+        //window.setAnimationStyle(R.style.windows);
+        //显示位置：showAtLocation(主布局所点击的按钮id, 位置, x, y);
+        popSignOut.showAtLocation(MainActivity.this.findViewById(R.id.show), Gravity.CENTER, 0, 0);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            showSignOut();
+            return true;
+//            messagePresenter.deviceSignOut();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

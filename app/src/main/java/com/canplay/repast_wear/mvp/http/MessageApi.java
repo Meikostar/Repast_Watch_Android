@@ -2,9 +2,8 @@ package com.canplay.repast_wear.mvp.http;
 
 import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Resps;
-import com.canplay.repast_wear.mvp.model.Table;
+import com.canplay.repast_wear.mvp.model.RespsTable;
 
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.http.POST;
@@ -53,7 +52,7 @@ public interface MessageApi {
      * @return
      */
     @POST("wx/getWatchList")
-    Observable<List<Table>> getWatchList(@QueryMap Map<String, String> options);
+    Observable<RespsTable> getWatchList(@QueryMap Map<String, String> options);
 
 
     /**
@@ -63,4 +62,18 @@ public interface MessageApi {
      */
     @POST("wx/deviceInfo")
     Observable<DEVICE> deviceInfo(@QueryMap Map<String, String> options);
+
+    /**
+     * @param options
+     * @return
+     */
+    @POST("wx/getInit")
+    Observable<String> getInit(@QueryMap Map<String, String> options);
+
+    /**
+     * @param options
+     * @return
+     */
+    @POST("wx/deletePushInfo")
+    Observable<String> deletePushInfo(@QueryMap Map<String, String> options);
 }

@@ -3,7 +3,6 @@ package com.canplay.repast_wear.mvp.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,7 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
     private int state = 2;//1：忽略的消息，2已完成
     private boolean isDownLoad = true;
     private boolean isFlash;
-    private boolean isLoadMore;
+    private boolean isFirst = true;
     View noMoreView;
 
     public static HaveRespondFragment newInstance() {
@@ -135,6 +134,7 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
             @Override
             public void onPullUpToRefresh() {
                 if (!isDownLoad) {
+                    alert("已全部加载");
                     mSwipeRefresh.showNoMore(true);
                 } else {
                     handler.postDelayed(runnable, 1000);
@@ -155,6 +155,20 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         noMoreView.setPadding(10, 10, 10, 10);
         mSwipeRefresh.setNoMoreView(noMoreView, layoutParams);
+        adapter.setClickListener(new RespondAdapter.ImageViewClickListener() {
+            @Override
+            public void ImageClick(int position) {
+                if(messages.get(position) == null){
+                    return;
+                }
+                messagePresenter.deletePushInfo(messages.get(position).getPushId());
+                messages.remove(position);
+                adapter.notifyDataSetChanged();
+                if (messages.size() == 0) {
+                    tvNull.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
@@ -168,35 +182,59 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
 
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
-    }
-
-    @Override
-    public <T> void toEntity(T entity) {
         if (isFlash) {
             messages.clear();
             isFlash = false;
         }
-        Resps resps = (Resps) entity;
-        Log.e("HaveRespondFragment---", resps.toString());
-        List<Message> pushListResps = resps.getPushListResps();
-
-        if (pushListResps == null || pushListResps.size() == 0) {
-            alert("已全部加载");
-            if (messages.size() == 0) {
-                tvNull.setVisibility(View.VISIBLE);
-            }
-            if (isLoadMore) {
-                isDownLoad = true;
-            }
-        } else {
-            isLoadMore=true;
-            tvNull.setVisibility(View.GONE);
-            for (int i = 0; i < pushListResps.size(); i++) {
-                Message message = pushListResps.get(i);
-                messages.add(message);
-            }
-            adapter.notifyDataSetChanged();
+        List<Message> pushListResps = (List<Message>) list;
+        tvNull.setVisibility(View.GONE);
+        messages.addAll(pushListResps);
+        adapter.notifyDataSetChanged();
+        if (messages.size() == 0) {
+            tvNull.setVisibility(View.VISIBLE);
         }
+        if (type == 1) {//有下一页
+            isDownLoad=true;
+        } else if (type == 0) {
+            isDownLoad=false;
+//            if(!isFirst){
+//                alert("已全部加载");
+//                isFirst = false;
+//            }
+//
+//            if (isLoadMore) {
+//                isDownLoad = true;
+//            }
+        }
+    }
+
+    @Override
+    public <T> void toEntity(T entity) {
+//        if (isFlash) {
+//            messages.clear();
+//            isFlash = false;
+//        }
+//        Resps resps = (Resps) entity;
+//        Log.e("HaveRespondFragment---", resps.toString());
+//        List<Message> pushListResps = resps.getPushListResps();
+//
+//        if (pushListResps == null || pushListResps.size() == 0) {
+//            alert("已全部加载");
+//            if (messages.size() == 0) {
+//                tvNull.setVisibility(View.VISIBLE);
+//            }
+//            if (isLoadMore) {
+//                isDownLoad = true;
+//            }
+//        } else {
+//            isLoadMore=true;
+//            tvNull.setVisibility(View.GONE);
+//            for (int i = 0; i < pushListResps.size(); i++) {
+//                Message message = pushListResps.get(i);
+//                messages.add(message);
+//            }
+//            adapter.notifyDataSetChanged();
+//        }
     }
 
     @Override

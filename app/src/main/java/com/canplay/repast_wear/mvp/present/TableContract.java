@@ -38,7 +38,7 @@ public class TableContract {
         /**
          * 获得绑定桌号
          */
-        void bondBusiness(String deviceCode,long businessId,String tableNo, Context context);
+        void bondBusiness(String deviceCode,long businessId,String tableNo,String name, Context context);
 
 
 

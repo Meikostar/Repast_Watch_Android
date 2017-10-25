@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -64,6 +66,7 @@ public class BinderActivity extends BaseActivity implements TableContract.View {
     private Intent intent;
     private ListAdapter adapter;
     private long businessId;
+
 
     @Override
     public void initInjector() {
@@ -132,11 +135,7 @@ public class BinderActivity extends BaseActivity implements TableContract.View {
                     showToast("请选择省／市／区");
                     break;
                 }
-                Intent intent = getIntent();
-                intent.setClass(BinderActivity.this, BinderTabeActivity.class);
-                intent.putExtra("businessId", businessId);
-                startActivity(intent);
-                sp.putBoolean("hasBinder", false);
+                toBinderTable();
                 break;
         }
     }
@@ -192,6 +191,19 @@ public class BinderActivity extends BaseActivity implements TableContract.View {
             }
         }
     }
+
+
+
+
+
+    private void toBinderTable() {
+        Intent intent = getIntent();
+        intent.setClass(BinderActivity.this, BinderTabeActivity.class);
+        intent.putExtra("businessId", businessId);
+        startActivity(intent);
+        sp.putBoolean("hasBinder", false);
+    }
+
 
     @Override
     public void onBackClick(View v) {

@@ -21,7 +21,8 @@
             android:textColor="@color/white"
             android:textAlignment="center"
             android:gravity="center"
-            android:text="张宇"
+            android:textSize="10sp"
+            android:text="A2345"
             />
     <!--<RelativeLayout
         android:layout_width="0dp"

@@ -23,11 +23,16 @@ public class RespondAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private int type;
     private CountDownTimer removetimer;
+    private ImageViewClickListener clickListener;
 
     public RespondAdapter(Context context, List<Message> messageList) {
         this.messageList = messageList;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
+    }
+
+    public void setClickListener(ImageViewClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 
     public void setType(int type) {
@@ -50,7 +55,7 @@ public class RespondAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.adapter_item_respond, null);
@@ -76,13 +81,11 @@ public class RespondAdapter extends BaseAdapter {
                 removetimer = new CountDownTimer(time, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-//                        holder.tvTime.setText((millisUntilFinished / 1000) + "");
                     }
                     @Override
                     public void onFinish() {
                         holder.finished.setVisibility(View.GONE);
                         holder.imageNext.setVisibility(View.VISIBLE);
-//                        holder.tvTime.setText("已超出60s");
                     }
                 }.start();
             }else {
@@ -93,6 +96,14 @@ public class RespondAdapter extends BaseAdapter {
             Log.e("timeLong", ""+message.getTime());
             Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
         }
+        holder.finished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(clickListener != null){
+                    clickListener.ImageClick(position);
+                }
+            }
+        });
         return convertView;
     }
 
@@ -111,6 +122,10 @@ public class RespondAdapter extends BaseAdapter {
             tvTime = (TextView) view.findViewById(R.id.tv_time);
             tableNumber = (TextView) view.findViewById(R.id.table_number);
         }
+    }
+
+    public interface ImageViewClickListener {
+        void ImageClick(int position);
     }
 }
 

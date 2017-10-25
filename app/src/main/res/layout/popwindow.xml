@@ -20,8 +20,8 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/round_bg_hui"
             android:gravity="center_vertical|right"
-            android:paddingRight="9dp"
-            android:text="呼叫列表"
+            android:paddingRight="12dp"
+            android:text="收到"
             android:textColor="@color/white"
             android:textSize="20px" />
 

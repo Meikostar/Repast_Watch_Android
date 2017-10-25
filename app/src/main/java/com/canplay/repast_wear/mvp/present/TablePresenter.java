@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.canplay.repast_wear.base.manager.ApiManager;
 import com.canplay.repast_wear.mvp.http.TableApi;
-import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.PROVINCE;
 import com.canplay.repast_wear.mvp.model.Table;
 import com.canplay.repast_wear.net.MySubscriber;
@@ -89,11 +88,12 @@ public class TablePresenter implements TableContract.Presenter {
     }
 
     @Override
-    public void bondBusiness(String deviceCode, long businessId, String tableIds, Context context) {
+    public void bondBusiness(String deviceCode, long businessId, String tableIds,String name, Context context) {
         Map<String, String> params = new TreeMap<>();
         params.put("deviceCode", deviceCode + "");
         params.put("businessId", businessId + "");
         params.put("tableIds", tableIds + "");
+        params.put("name", name + "");
         subscription = ApiManager.setSubscribe(tableApi.bondBusiness(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
             @Override
             public void onError(Throwable e) {
