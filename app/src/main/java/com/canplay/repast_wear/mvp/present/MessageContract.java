@@ -12,7 +12,7 @@ public class MessageContract {
 
         <T> void toList(List<T> list, int type, int... refreshType);
 
-        <T> void toEntity(T entity);
+        <T> void toEntity(T entity,int type);
 
         void toNextStep(int type);
 
@@ -57,6 +57,9 @@ public class MessageContract {
 
 
         void deletePushInfo(long pushId);
+
+        // apk下载 POST
+        void getApkInfo();
 
     }
 }

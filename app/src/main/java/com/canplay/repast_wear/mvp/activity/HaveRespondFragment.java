@@ -209,7 +209,7 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
     }
 
     @Override
-    public <T> void toEntity(T entity) {
+    public <T> void toEntity(T entity, int type) {
 //        if (isFlash) {
 //            messages.clear();
 //            isFlash = false;

@@ -218,7 +218,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     }
 
     @Override
-    public <T> void toEntity(T entity) {
+    public <T> void toEntity(T entity,int type) {
         canClick = true;
         if (isFlash) {
             messages.clear();

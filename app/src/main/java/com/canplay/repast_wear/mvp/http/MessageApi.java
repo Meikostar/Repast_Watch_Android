@@ -1,11 +1,14 @@
 package com.canplay.repast_wear.mvp.http;
 
+import com.canplay.repast_wear.mvp.model.ApkUrl;
 import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Resps;
 import com.canplay.repast_wear.mvp.model.RespsTable;
+import com.canplay.repast_wear.mvp.model.Version;
 
 import java.util.Map;
 
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 import rx.Observable;
@@ -67,8 +70,8 @@ public interface MessageApi {
      * @param options
      * @return
      */
-    @POST("wx/getInit")
-    Observable<String> getInit(@QueryMap Map<String, String> options);
+    @GET("wx/getInit")
+    Observable<Version> getInit(@QueryMap Map<String, String> options);
 
     /**
      * @param options
@@ -76,4 +79,10 @@ public interface MessageApi {
      */
     @POST("wx/deletePushInfo")
     Observable<String> deletePushInfo(@QueryMap Map<String, String> options);
+    /**
+     *   apk下载 POST
+     * @return
+     */
+    @POST("wx/getApkInfo")
+    Observable<ApkUrl> getApkInfo(@QueryMap Map<String, String> options);
 }

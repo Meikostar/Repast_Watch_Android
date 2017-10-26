@@ -6,9 +6,11 @@ import android.widget.Toast;
 
 import com.canplay.repast_wear.base.manager.ApiManager;
 import com.canplay.repast_wear.mvp.http.MessageApi;
+import com.canplay.repast_wear.mvp.model.ApkUrl;
 import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Resps;
 import com.canplay.repast_wear.mvp.model.RespsTable;
+import com.canplay.repast_wear.mvp.model.Version;
 import com.canplay.repast_wear.net.MySubscriber;
 
 import java.util.Map;
@@ -99,7 +101,7 @@ public class MessagePresenter implements MessageContract.Presenter {
 
             @Override
             public void onNext(DEVICE entity) {
-                mView.toEntity(entity);
+                mView.toEntity(entity,3);
             }
         });
     }
@@ -107,15 +109,15 @@ public class MessagePresenter implements MessageContract.Presenter {
     public void getInit(String deviceCode) {
         Map<String, String> params = new TreeMap<>();
         params.put("deviceCode", deviceCode + "");
-        subscription = ApiManager.setSubscribe(messageApi.getInit(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
+        subscription = ApiManager.setSubscribe(messageApi.getInit(ApiManager.getParameters(params, false)), new MySubscriber<Version>() {
             @Override
             public void onError(Throwable e) {
                 super.onError(e);
             }
 
             @Override
-            public void onNext(String entity) {
-                mView.toEntity(entity);
+            public void onNext(Version entity) {
+                mView.toEntity(entity,1);
             }
         });
     }
@@ -155,6 +157,23 @@ public class MessagePresenter implements MessageContract.Presenter {
             }
         });
     }
+    @Override
+    public void getApkInfo() {
+        Map<String, String> params = new TreeMap<>();
+        subscription = ApiManager.setSubscribe(messageApi.getApkInfo(ApiManager.getParameters(params, true)), new MySubscriber<ApkUrl>() {
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(ApkUrl entity) {
+                mView.toEntity(entity,2);
+            }
+        });
+    }
+
+
     @Override
     public void getWatchList(String deviceCode, String businessId,int pageSize,int pageIndex, final Context context) {
         Map<String, String> params = new TreeMap<>();

@@ -161,7 +161,7 @@ public class ToContactActivity extends BaseActivity implements MessageContract.V
     }
 
     @Override
-    public <T> void toEntity(T entity) {
+    public <T> void toEntity(T entity,int type) {
     }
 
     @Override

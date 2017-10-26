@@ -2,6 +2,8 @@ package com.canplay.repast_wear.mvp.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
@@ -24,10 +26,13 @@ import com.canplay.repast_wear.base.BaseApplication;
 import com.canplay.repast_wear.base.RxBus;
 import com.canplay.repast_wear.base.SubscriptionBean;
 import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
+import com.canplay.repast_wear.mvp.model.ApkUrl;
 import com.canplay.repast_wear.mvp.model.DEVICE;
 import com.canplay.repast_wear.mvp.model.Message;
+import com.canplay.repast_wear.mvp.model.Version;
 import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
+import com.canplay.repast_wear.util.DownloadApk;
 import com.canplay.repast_wear.util.SpUtil;
 import com.canplay.repast_wear.view.TitleBarLayout;
 
@@ -84,7 +89,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         } else {
 //            messagePresenter.deviceInfo(androidId);
         }
-//        messagePresenter.getInit(androidId);
+        messagePresenter.getInit(androidId);
     }
 
     @Override
@@ -95,10 +100,10 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             @Override
             public void call(SubscriptionBean.RxBusSendBean bean) {
                 if (bean == null) return;
-                 if (bean.type == SubscriptionBean.CHOOSE) {
+                if (bean.type == SubscriptionBean.CHOOSE) {
                     Message message = (Message) bean.content;
                     pushId = message.getPushId();
-                    if (wakeLock!=null){
+                    if (wakeLock != null) {
                         wakeLock.acquire();
                     }
                     showJPushData(message);
@@ -198,7 +203,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private TextView clockTime;
 
     public void showJPushData(final Message message) {
-        if (wakeLock!=null){
+        if (wakeLock != null) {
             wakeLock.release();
         }
 //        if (isShow) {                       //注释：取消30秒后自动调用转移接口
@@ -294,12 +299,23 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     }
 
     @Override
-    public <T> void toEntity(T entity) {
-        DEVICE device = (DEVICE) entity;
-        Log.e("device", device.toString());
-        if (device.getBound() == 0) startActivity(new Intent(this, BinderActivity.class));
-        tableNo = device.getTableNo();
-
+    public <T> void toEntity(T entity, int type) {
+        if (type == 1) {//获取版本信息
+            Version version = (Version) entity;
+            String apkVersion = version.getApkVersion();
+            if (getVersion(this) != apkVersion && !getVersion(this).equals(apkVersion)) {
+                messagePresenter.getApkInfo();
+            }
+        } else if (type == 2) {//进行版本的自动下载更新
+            ApkUrl apkUrl = (ApkUrl) entity;
+            String uploadUrl = apkUrl.getUploadUrl();
+            new Thread(new DownloadApk(uploadUrl,this)).start();
+        } else if (type == 3) {
+            DEVICE device = (DEVICE) entity;
+            Log.e("device", device.toString());
+            if (device.getBound() == 0) startActivity(new Intent(this, BinderActivity.class));
+            tableNo = device.getTableNo();
+        }
     }
 
     @Override
@@ -365,7 +381,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             @Override
             public void onClick(View v) {
                 String password = editText.getText().toString();
-                if (password.equals("")&&password.length() == 0) {
+                if (password.equals("") && password.length() == 0) {
                     toast = Toast.makeText(MainActivity.this, "输入密码不能为空!", Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
@@ -392,5 +408,23 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 //            messagePresenter.deviceSignOut();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public static String getVersion(Context context) {
+
+        try {
+
+            PackageManager manager = context.getPackageManager();
+
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+
+            String version = info.versionName;
+
+            return version;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
