@@ -25,7 +25,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:textSize="20px"
+                android:textSize="18px"
                 android:gravity="center"
                 android:text="01fff"
                 android:textColor="#27cd41" />
@@ -39,7 +39,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="点餐"
                 android:textColor="@color/white"
-                android:textSize="20px" />
+                android:textSize="18px" />
 
             <ImageView
                 android:id="@+id/image_next"

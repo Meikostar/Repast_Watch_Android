@@ -43,8 +43,8 @@ public class ToContactActivity extends BaseActivity implements MessageContract.V
     private TextView name;
     private long pushId;
     private SpUtil sp;
-    private String deviceCode;
-    private String businessId;
+    private String deviceCode="";
+    private String businessId="";
 
     private int pageSize = 20;//每页数
     private int pageIndex =1;//当前页 首页传1

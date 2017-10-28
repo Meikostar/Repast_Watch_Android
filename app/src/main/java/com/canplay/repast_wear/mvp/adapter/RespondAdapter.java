@@ -75,7 +75,7 @@ public class RespondAdapter extends BaseAdapter {
         }else {
             if(DateUtil.isLittle(message.getTime())){//判断是否小于60s
                 holder.finished.setVisibility(View.VISIBLE);
-                holder.finished.setText("待处理...");
+                holder.finished.setText("待处理");
                 holder.imageNext.setVisibility(View.GONE);
                 long time = DateUtil.getLittleTime(message.getTime())*1000;
                 removetimer = new CountDownTimer(time, 1000) {
