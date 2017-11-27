@@ -39,7 +39,9 @@ public class TitleBarLayout extends FrameLayout {
     @BindView(R.id.title_text)
     /** 标题 */
             TextView titleName;
-
+    @BindView(R.id.title_name)
+    /** 标题 */
+            TextView titleTable;
     @BindView(R.id.title_back_tv)
     /** 返回的文字 */
             TextView title_back_tv;
@@ -169,8 +171,15 @@ public class TitleBarLayout extends FrameLayout {
      *
      * @param resId
      */
-    public void setBackText(int resId) {
+    public void setBackText(int resId,String name) {
         title_back_tv.setText(resId);
+        if(name!=null){
+            titleTable.setVisibility(VISIBLE);
+            titleTable.setText(name);
+        }else {
+            titleTable.setVisibility(GONE);
+
+        }
     }
 
     /**

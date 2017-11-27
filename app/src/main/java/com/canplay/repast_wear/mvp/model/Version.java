@@ -23,6 +23,15 @@ public class Version {
     private String sensitiveVersion;
     private String sensitiveUrl;
     private String apkVersion;
+    private String watchName;
+
+    public String getWatchName() {
+        return watchName;
+    }
+
+    public void setWatchName(String watchName) {
+        this.watchName = watchName;
+    }
 
     public int getVersion() {
         return version;

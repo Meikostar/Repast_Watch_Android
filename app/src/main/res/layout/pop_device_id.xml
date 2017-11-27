@@ -51,6 +51,7 @@
                     android:textSize="14sp"
                     android:background="@null"
                     android:inputType="text"
+                    android:maxLength="6"
                     android:textColor="@color/slow_black"
                     android:textColorHint="@color/color_primary_e3"
                     android:layout_height="match_parent" />

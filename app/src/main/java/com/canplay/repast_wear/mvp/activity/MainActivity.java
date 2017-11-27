@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -34,6 +35,7 @@ import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
 import com.canplay.repast_wear.util.DownloadApk;
 import com.canplay.repast_wear.util.SpUtil;
+import com.canplay.repast_wear.util.TextUtil;
 import com.canplay.repast_wear.view.TitleBarLayout;
 
 import java.util.List;
@@ -72,14 +74,14 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         DaggerBaseComponent.builder().appComponent(((BaseApplication) getApplication()).getAppComponent()).build().inject(this);
         messagePresenter.attachView(this);
     }
-
+    private TitleBarLayout titleBarView;
     @Override
     public void initCustomerUI() {
         initUI(R.layout.activity_main);
         ButterKnife.bind(this);
-        TitleBarLayout titleBarView = getTitleBarView();
+         titleBarView = getTitleBarView();
         titleBarView.setLeftArrowDisable();
-        titleBarView.setBackText(R.string.main_name);
+        titleBarView.setBackText(R.string.main_name,null);
         sp = SpUtil.getInstance();
         androidId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
         sp.putString("deviceCode", androidId);
@@ -306,6 +308,10 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             if (getVersion(this) != apkVersion && !getVersion(this).equals(apkVersion)) {
                 messagePresenter.getApkInfo();
             }
+            if(TextUtil.isNotEmpty(version.getWatchName())){
+                titleBarView.setBackText(R.string.main_name,"－"+version.getWatchName());
+            }
+
         } else if (type == 2) {//进行版本的自动下载更新
             ApkUrl apkUrl = (ApkUrl) entity;
             String uploadUrl = apkUrl.getUploadUrl();
@@ -331,6 +337,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         }
         if (type == 3) {
             popSignOut.dismiss();
+            Intent intent =  new Intent(Settings.ACTION_SETTINGS);
+            startActivity(intent);
             finishAffinity();
         }
         if (type == 4) {
