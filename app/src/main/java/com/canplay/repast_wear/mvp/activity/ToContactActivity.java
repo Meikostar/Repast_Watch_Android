@@ -70,6 +70,12 @@ public class ToContactActivity extends BaseActivity implements MessageContract.V
         presenter.getWatchList(deviceCode, businessId,pageSize,pageIndex,this);
         mSwipeRefresh.setScrollMode(SwipeRefreshMode.MODE_LOADMODE);
     }
+
+    @Override
+    public void notifyBattery(int level, int scale, int status) {
+
+    }
+
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override

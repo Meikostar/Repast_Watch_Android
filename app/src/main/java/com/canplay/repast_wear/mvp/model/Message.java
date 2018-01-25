@@ -10,6 +10,7 @@ public class Message implements Serializable{
            "tableNo": "5"
    * */
     private Long pushId;
+    public int state;
     private Long businessId;
     private String tableNo;
     private String menuName;

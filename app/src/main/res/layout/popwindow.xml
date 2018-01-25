@@ -78,7 +78,7 @@
             android:layout_alignParentRight="true"
             android:background="@drawable/green_cycle"
             android:gravity="center"
-            android:text="完成"
+            android:text="收到"
             android:textColor="#ffffff"
             android:textSize="24px" />
 

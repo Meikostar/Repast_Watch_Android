@@ -71,6 +71,11 @@ public class BinderTabeActivity extends BaseActivity implements TableContract.Vi
     }
 
     @Override
+    public void notifyBattery(int level, int scale, int status) {
+
+    }
+
+    @Override
     public void initOther() {
         findViewById(R.id.btn_next).setOnClickListener(new View.OnClickListener() {
             @Override

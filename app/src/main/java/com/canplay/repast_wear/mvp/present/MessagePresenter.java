@@ -39,7 +39,7 @@ public class MessagePresenter implements MessageContract.Presenter {
         params.put("deviceCode", deviceCode + "");
         params.put("pageSize", pageSize + "");//每页数
         params.put("pageNo", pageNo + "");//当前页 首页传1
-        params.put("state", state + "");//1：忽略的消息，2已完成
+        params.put("state", 0 + "");//1：忽略的消息，2已完成
         subscription = ApiManager.setSubscribe(messageApi.getWatchMessageList(ApiManager.getParameters(params, true)), new MySubscriber<Resps>() {
             @Override
             public void onError(Throwable e) {
@@ -154,6 +154,7 @@ public class MessagePresenter implements MessageContract.Presenter {
 
             @Override
             public void onNext(String entity) {
+                mView.toNextStep(2);
             }
         });
     }

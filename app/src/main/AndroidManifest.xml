@@ -15,7 +15,7 @@
     <!-- 允许程序访问Wi-Fi网络状态信息 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>
     <!-- 极光 -->
     <!-- Required -->
     <permission

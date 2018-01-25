@@ -86,6 +86,11 @@ public class BinderActivity extends BaseActivity implements TableContract.View {
     }
 
     @Override
+    public void notifyBattery(int level, int scale, int status) {
+
+    }
+
+    @Override
     public void initOther() {
     }
 

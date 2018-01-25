@@ -1,11 +1,15 @@
 package com.canplay.repast_wear.mvp.activity;
 
+import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,10 +23,13 @@ import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.mvp.model.Resps;
 import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
+import com.canplay.repast_wear.util.DateUtil;
 import com.canplay.repast_wear.util.SpUtil;
+import com.canplay.repast_wear.view.MPopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -43,6 +50,8 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
     ListView listHaveRespond;
     @BindView(R.id.mSwipeRefresh)
     SwipeRefreshPlus mSwipeRefresh;
+    @BindView(R.id.line)
+    View line;
     private Unbinder unbinder;
     private List<Message> messages = new ArrayList<>();
     private RespondAdapter adapter;
@@ -86,11 +95,12 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
     }
 
     private void initView() {
-        adapter = new RespondAdapter(getActivity(), messages);
+        adapter = new RespondAdapter(getActivity(), messages,listHaveRespond);
         adapter.setType(1);
         listHaveRespond.setAdapter(adapter);
         messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());
         mSwipeRefresh.setScrollMode(SwipeRefreshMode.MODE_BOTH);
+
     }
     Handler handler=new Handler();
     Runnable runnable=new Runnable(){
@@ -155,22 +165,51 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         noMoreView.setPadding(10, 10, 10, 10);
         mSwipeRefresh.setNoMoreView(noMoreView, layoutParams);
+        adapter.setDeletListener(new RespondAdapter.selectItemListener() {
+            @Override
+            public void delete(Message message, int type, int poistion) {
+                poistions=poistion;
+                showPopWindow();
+            }
+        });
         adapter.setClickListener(new RespondAdapter.ImageViewClickListener() {
             @Override
             public void ImageClick(int position) {
                 if(messages.get(position) == null){
                     return;
                 }
-                messagePresenter.deletePushInfo(messages.get(position).getPushId());
-                messages.remove(position);
-                adapter.notifyDataSetChanged();
-                if (messages.size() == 0) {
-                    tvNull.setVisibility(View.VISIBLE);
+//               showPopWindow(position);
+            }
+
+            @Override
+            public void ImageClicks(int position) {
+                Message message = messages.get(position);
+                if (message == null || !canClick) {
+                    return;
+                }
+                long messageTime = message.getTime();
+                if (DateUtil.isLittle(messageTime)) {
+                    Intent intent = new Intent(activity, ToContactActivity.class);
+                    intent.putExtra("pushId", message.getPushId());
+                    startActivityForResult(intent, 2);
                 }
             }
         });
     }
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == activity.RESULT_OK) {
+            Log.e("haha", "-----重新刷新了！---------");
+            canClick = false;
+            isFlash = true;
+            messages.clear();//重新加载，清空
+            adapter.notifyDataSetChanged();
+            pageNo = 1;
+            messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());//转移消息之后刷新
+        }
+    }
+    private boolean canClick = true;
 
     @Override
     public void onDestroyView() {
@@ -179,9 +218,63 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
         unbinder.unbind();
         super.onDestroyView();
     }
+    private MPopupWindow mPopupWindow1;
+    private View mView2;
+    private TextView tvSure;
+    private TextView tvCancel;
+    public void showPopWindow(){
+        if (mView2 == null) {
+            mView2 = View.inflate(getActivity(), R.layout.pop_exit_view, null);
+             tvCancel = (TextView) mView2.findViewById(R.id.tv_cancel);
+             tvSure = (TextView) mView2.findViewById(R.id.tv_sure);
+             tvCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPopupWindow1.dismiss();
+                }
+            });
+            tvSure.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    messagePresenter.deletePushInfo(messages.get(poistions).getPushId());
 
+                    mPopupWindow1.dismiss();
+                    if (messages.size() == 0) {
+                        tvNull.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+            mPopupWindow1 = new MPopupWindow(mView2, ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            mPopupWindow1.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow1.setFocusable(true);
+            mPopupWindow1.setOutsideTouchable(true);
+
+            if (mPopupWindow1.isShowing()) {
+                mPopupWindow1.dismiss();
+            } else {
+                mPopupWindow1.showAsDropDown(line, 0, 0);
+            }
+            mPopupWindow1.setShowListener(new MPopupWindow.IShowListener() {
+                @Override
+                public void onShow() {
+                }
+
+                @Override
+                public void onDismiss() {
+                }
+            });
+        } else {
+            if (mPopupWindow1.isShowing()) {
+                mPopupWindow1.dismiss();
+            } else {
+                mPopupWindow1.showAsDropDown(line, 0, 0);
+            }
+        }
+    }
     @Override
     public <T> void toList(List<T> list, int type, int... refreshType) {
+        canClick = true;
         if (isFlash) {
             messages.clear();
             isFlash = false;
@@ -201,7 +294,6 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
 //                alert("已全部加载");
 //                isFirst = false;
 //            }
-//
 //            if (isLoadMore) {
 //                isDownLoad = true;
 //            }
@@ -210,6 +302,7 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
 
     @Override
     public <T> void toEntity(T entity, int type) {
+        canClick = true;
 //        if (isFlash) {
 //            messages.clear();
 //            isFlash = false;
@@ -236,10 +329,12 @@ public class HaveRespondFragment extends BaseFragment implements MessageContract
 //            adapter.notifyDataSetChanged();
 //        }
     }
-
+    private int poistions=0;
     @Override
     public void toNextStep(int type) {
-
+        messages.remove(poistions);
+        adapter.setDatas(messages);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

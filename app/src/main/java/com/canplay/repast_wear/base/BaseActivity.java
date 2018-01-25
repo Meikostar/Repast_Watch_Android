@@ -2,10 +2,12 @@ package com.canplay.repast_wear.base;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -71,6 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
             registerReceiver(receiver, filter);
         }
         receiver.setNetEvent(this);
+        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         initInjector();
         initCustomerUI();
         ButterKnife.bind(this);
@@ -87,7 +90,18 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);*/
         }
     }
+    private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)){
+                int level = intent.getIntExtra("level", 0);
+                int scale = intent.getIntExtra("scale", 100);
+                int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_NOT_CHARGING);
+                notifyBattery(level,scale,status);
+            }
+        }
+    };
     /**
      * 初始化页面
      *
@@ -242,6 +256,10 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
      * 初始Ul(标题与bodyView)
      */
     public abstract void initCustomerUI();
+    /*
+     * 充电通知
+     */
+    public abstract void notifyBattery(int level,int scale,int status);
 
     /**
      * 初始化其他资源
@@ -468,6 +486,10 @@ public abstract class BaseActivity extends AppCompatActivity implements TitleBar
             toast.cancel();
             toast = null;
         }
+        if(batteryReceiver!=null){
+            unregisterReceiver(batteryReceiver);
+        }
+
         if (receiver != null) {
             unregisterReceiver(receiver);
         }

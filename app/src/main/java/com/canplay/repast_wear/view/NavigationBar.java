@@ -2,6 +2,8 @@ package com.canplay.repast_wear.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.AnimationDrawable;
+import android.os.BatteryManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,8 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
     private View naviView;
     private View line;
     private ImageView img_left;
+    private ImageView ivBatteryCharging;
+    private ImageView ivBattery;
     private ImageView right_img;
     private ImageView img_right;
     private TextView txt_right;
@@ -176,6 +180,7 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
         layout_right = naviView.findViewById(R.id.topview_right_layout);
 
         img_left = (ImageView) naviView.findViewById(R.id.top_view_back);
+
         right_img = (ImageView) naviView.findViewById(R.id.right_img);
         img_right = (ImageView) naviView.findViewById(R.id.top_view_right);
 
@@ -225,6 +230,7 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
         public int backgroundColor;
         public int right_img;
     }
+
     public void setColors(int id){
         txt_right.setTextColor(getResources().getColor(id));
     }

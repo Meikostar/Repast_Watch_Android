@@ -94,7 +94,7 @@ public class NoRespondFragment extends BaseFragment implements MessageContract.V
     }
 
     private void initView() {
-        adapter = new RespondAdapter(getActivity(), messages);
+//        adapter = new RespondAdapter(getActivity(), messages);
         adapter.setType(2);
         listNoRespond.setAdapter(adapter);
         messagePresenter.getWatchMessageList(deviceCode, pageSize, pageNo, state, getActivity());

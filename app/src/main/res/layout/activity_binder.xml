@@ -79,25 +79,40 @@
             android:id="@+id/rl_dian"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="28px"
-                android:text="@string/dian"
-                />
-            <TextView
-                android:maxLines="2"
-                android:text=""
-                android:layout_marginLeft="36dp"
-                android:id="@+id/tv_dian"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+            <LinearLayout
+                android:layout_marginRight="36dp"
+
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="28px"
+                    android:text="@string/dian"
+                    />
+                <TextView
+                    android:layout_marginLeft="8dp"
+                    android:maxLines="2"
+                    android:text=""
+                    android:gravity="right"
+                    android:id="@+id/tv_dian"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/white"
+                    android:textSize="24px" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/icon"
                 android:layout_centerVertical="true"
-                android:drawableRight="@drawable/arrow_right"
-                android:textColor="@color/white"
-                android:textSize="24px" />
+                android:layout_alignParentRight="true"
+                android:src="@drawable/arrow_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
         <Button
             android:id="@+id/btn_next"

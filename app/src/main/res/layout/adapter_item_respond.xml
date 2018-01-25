@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
     android:layout_marginTop="6dp"
     android:background="@color/black">
-
     <LinearLayout
+        android:id="@+id/ll_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
@@ -40,8 +42,20 @@
                 android:text="点餐"
                 android:textColor="@color/white"
                 android:textSize="18px" />
-
+            <TextView
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/complain"
+                android:layout_width="45px"
+                android:layout_height="45px"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/green_cycle"
+                android:gravity="center"
+                android:text="完成"
+                android:textColor="#ffffff"
+                android:textSize="16px" />
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/image_next"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -50,33 +64,32 @@
                 android:layout_marginRight="10dp"
                 android:src="@drawable/arrow_right"
                 />
-
-            <TextView
-                android:id="@+id/tv_finish"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:text="x"
-                android:textColor="@color/white"
-                android:textSize="16px"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:visibility="gone"
-                />
             <!--<TextView-->
                 <!--android:id="@+id/tv_finish"-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_alignParentRight="true"-->
                 <!--android:layout_centerVertical="true"-->
-                <!--android:layout_marginRight="13dp"-->
-                <!--android:text="已完成"-->
-                <!--android:textColor="@color/color9"-->
-                <!--android:textSize="14px"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:text=""-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="16px"-->
+                <!--android:paddingLeft="15dp"-->
+                <!--android:paddingRight="15dp"-->
                 <!--android:visibility="gone"-->
                 <!--/>-->
+            <TextView
+            android:id="@+id/tv_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="13dp"
+            android:text="已完成"
+            android:textColor="@color/color9"
+            android:textSize="14px"
+            android:visibility="gone"
+            />
         </RelativeLayout>
         <TextView
             android:layout_width="match_parent"
@@ -97,13 +110,13 @@
     </LinearLayout>
 
     <!--<TextView-->
-        <!--android:id="@+id/table_number"-->
-        <!--android:layout_width="44px"-->
-        <!--android:layout_height="44px"-->
-        <!--android:layout_marginLeft="24dp"-->
-        <!--android:background="@drawable/double_cycle"-->
-        <!--android:textSize="10sp"-->
-        <!--android:gravity="center"-->
-        <!--android:text="01fff"-->
-        <!--android:textColor="@color/white" />-->
+    <!--android:id="@+id/table_number"-->
+    <!--android:layout_width="44px"-->
+    <!--android:layout_height="44px"-->
+    <!--android:layout_marginLeft="24dp"-->
+    <!--android:background="@drawable/double_cycle"-->
+    <!--android:textSize="10sp"-->
+    <!--android:gravity="center"-->
+    <!--android:text="01fff"-->
+    <!--android:textColor="@color/white" />-->
 </RelativeLayout>

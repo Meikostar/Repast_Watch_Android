@@ -5,6 +5,10 @@
     android:background="@color/black"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_horizontal">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.001dp"
+        android:id="@+id/line"/>
    <!-- <com.canplay.repast_wear.view.loadmore.XListView
         android:id="@+id/list_have_respond"
         android:layout_width="match_parent"

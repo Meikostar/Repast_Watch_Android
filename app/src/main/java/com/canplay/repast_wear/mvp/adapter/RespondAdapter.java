@@ -6,15 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.canplay.repast_wear.R;
+import com.canplay.repast_wear.SwipmenuListView.SwipeListLayout;
 import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.util.DateUtil;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RespondAdapter extends BaseAdapter {
 
@@ -24,11 +30,38 @@ public class RespondAdapter extends BaseAdapter {
     private int type;
     private CountDownTimer removetimer;
     private ImageViewClickListener clickListener;
-
-    public RespondAdapter(Context context, List<Message> messageList) {
+    private Set<SwipeListLayout> sets = new HashSet();
+    public void setDatas( List<Message> messageList){
+        this.messageList = messageList;
+    }
+    public RespondAdapter(Context context, List<Message> messageList, ListView lv_content) {
         this.messageList = messageList;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
+        lv_content.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    //当listview开始滑动时，若有item的状态为Open，则Close，然后移除
+                    case SCROLL_STATE_TOUCH_SCROLL:
+                        if (sets.size() > 0) {
+                            for (SwipeListLayout s : sets) {
+                                s.setStatus(SwipeListLayout.Status.Close, true);
+                                sets.remove(s);
+                            }
+                        }
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+
+            }
+        });
     }
 
     public void setClickListener(ImageViewClickListener clickListener) {
@@ -62,63 +95,68 @@ public class RespondAdapter extends BaseAdapter {
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }else holder =(ViewHolder) convertView.getTag();
-        Message message = messageList.get(position);
+        final Message message = messageList.get(position);
         holder.tvContext.setText(message.getContent());
         holder.tableNumber.setText(message.getTableNo());
-        final String timeDistance = DateUtil.getTimeDistance(DateUtil.getTimeLong(), message.getTime());
-        if (type == 1) {//已完成
-            Log.e("timeLong", ""+message.getTime());
-            Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
-            holder.finished.setVisibility(View.VISIBLE);
-            holder.imageNext.setVisibility(View.GONE);
-            holder.tvTime.setText(timeDistance+"前");
-        }else {
-            if(DateUtil.isLittle(message.getTime())){//判断是否小于60s
-                holder.finished.setVisibility(View.VISIBLE);
-                holder.finished.setText("待处理");
-                holder.imageNext.setVisibility(View.GONE);
-                long time = DateUtil.getLittleTime(message.getTime())*1000;
-                removetimer = new CountDownTimer(time, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
-                    @Override
-                    public void onFinish() {
-                        holder.finished.setVisibility(View.GONE);
-                        holder.imageNext.setVisibility(View.VISIBLE);
-                    }
-                }.start();
-            }else {
-                holder.imageNext.setVisibility(View.VISIBLE);
-                holder.finished.setVisibility(View.GONE);
-            }
-            holder.tvTime.setText(timeDistance+"前");
-            Log.e("timeLong", ""+message.getTime());
-            Log.e("nowtimeLong", ""+DateUtil.getTimeLong());
-        }
-        holder.finished.setOnClickListener(new View.OnClickListener() {
+        holder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                listener.delete(message,1,position);
+            }
+        });
+        final String timeDistance = DateUtil.getTimeDistance(DateUtil.getTimeLong(), message.getTime());
+
+
+        holder.ll_bg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if(clickListener != null){
-                    clickListener.ImageClick(position);
+                    clickListener.ImageClicks(position);
                 }
             }
         });
+        holder.ll_bg.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                if(clickListener != null){
+                    clickListener.ImageClick(position);
+                }
+                return true;
+            }
+        });
+//        holder.finished.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(clickListener != null){
+//                    clickListener.ImageClick(position);
+//                }
+//            }
+//        });
         return convertView;
     }
-
-
+    public interface selectItemListener{
+        void delete(Message message, int type, int poistion);
+    }
+    public void setDeletListener(selectItemListener listener){
+        this.listener=listener;
+    }
+    private selectItemListener listener;
     protected class ViewHolder {
         private TextView tvContext;
-        private ImageView imageNext;
-        private TextView finished;
+
+        private TextView complete;
+        private LinearLayout ll_bg;
+
         private TextView tvTime;
         private TextView tableNumber;
 
         public ViewHolder(View view) {
             tvContext = (TextView) view.findViewById(R.id.tv_context);
-            imageNext = (ImageView) view.findViewById(R.id.image_next);
-            finished = (TextView) view.findViewById(R.id.tv_finish);
+            complete = (TextView) view.findViewById(R.id.complain);
+
+            ll_bg = (LinearLayout) view.findViewById(R.id.ll_bg);
+
             tvTime = (TextView) view.findViewById(R.id.tv_time);
             tableNumber = (TextView) view.findViewById(R.id.table_number);
         }
@@ -126,6 +164,43 @@ public class RespondAdapter extends BaseAdapter {
 
     public interface ImageViewClickListener {
         void ImageClick(int position);
+        void ImageClicks(int position);
+    }
+    class MyOnSlipStatusListener implements SwipeListLayout.OnSwipeStatusListener {
+
+        private SwipeListLayout slipListLayout;
+
+        public MyOnSlipStatusListener(SwipeListLayout slipListLayout) {
+            this.slipListLayout = slipListLayout;
+        }
+
+        @Override
+        public void onStatusChanged(SwipeListLayout.Status status) {
+            if (status == SwipeListLayout.Status.Open) {
+                //若有其他的item的状态为Open，则Close，然后移除
+                if (sets.size() > 0) {
+                    for (SwipeListLayout s : sets) {
+                        s.setStatus(SwipeListLayout.Status.Close, true);
+                        sets.remove(s);
+                    }
+                }
+                sets.add(slipListLayout);
+            } else {
+                if (sets.contains(slipListLayout))
+                    sets.remove(slipListLayout);
+            }
+        }
+
+        @Override
+        public void onStartCloseAnimation() {
+
+        }
+
+        @Override
+        public void onStartOpenAnimation() {
+
+        }
+
     }
 }
 

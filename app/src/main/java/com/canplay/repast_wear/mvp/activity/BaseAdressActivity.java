@@ -89,6 +89,11 @@ public class BaseAdressActivity extends BaseActivity implements TableContract.Vi
     }
 
     @Override
+    public void notifyBattery(int level, int scale, int status) {
+
+    }
+
+    @Override
     public void initOther() {
         if(TextUtil.isNotEmpty(areaCode)){
 

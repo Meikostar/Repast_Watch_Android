@@ -58,11 +58,17 @@ public class RespondActivity extends BaseActivity {
         TitleBarLayout titleBarView = getTitleBarView();
         titleBarView.setTvBackColor(R.color.green_cyc);
     }
+
+    @Override
+    public void notifyBattery(int level, int scale, int status) {
+
+    }
+
     @Override
     public void initOther() {
         fm = getSupportFragmentManager();
         fragmentList = new ArrayList<>();
-        fragmentList.add(NoRespondFragment.newInstance());
+//        fragmentList.add(NoRespondFragment.newInstance());
         fragmentList.add(HaveRespondFragment.newInstance());
         adapter = new ViewPagerAdapter(fm, fragmentList);
         viewpager.setAdapter(adapter);

@@ -4,7 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.BatteryManager;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.os.Vibrator;
@@ -16,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -34,6 +39,7 @@ import com.canplay.repast_wear.mvp.model.Version;
 import com.canplay.repast_wear.mvp.present.MessageContract;
 import com.canplay.repast_wear.mvp.present.MessagePresenter;
 import com.canplay.repast_wear.util.DownloadApk;
+import com.canplay.repast_wear.util.NetUtil;
 import com.canplay.repast_wear.util.SpUtil;
 import com.canplay.repast_wear.util.TextUtil;
 import com.canplay.repast_wear.view.TitleBarLayout;
@@ -56,6 +62,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     LinearLayout show;
     @BindView(R.id.message)
     LinearLayout llmessage;
+
+
     private Subscription mSubscription;
     private long showtime;//覆盖的时间
     private SpUtil sp;
@@ -74,6 +82,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         DaggerBaseComponent.builder().appComponent(((BaseApplication) getApplication()).getAppComponent()).build().inject(this);
         messagePresenter.attachView(this);
     }
+    private int times;
+    private int status;
     private TitleBarLayout titleBarView;
     @Override
     public void initCustomerUI() {
@@ -82,6 +92,9 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
          titleBarView = getTitleBarView();
         titleBarView.setLeftArrowDisable();
         titleBarView.setBackText(R.string.main_name,null);
+        star= new SoundPool(10, AudioManager.STREAM_SYSTEM, 0);//第一个参数为同时播放数据流的最大个数，第二数据流类型，第三为声音质量
+        music = star.load(this, R.raw.star, 1); //把你的声音素材放到res/raw里，第2个参数即为资源文件，第3个为音乐的优先级
+
         sp = SpUtil.getInstance();
         androidId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
         sp.putString("deviceCode", androidId);
@@ -91,9 +104,36 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         } else {
 //            messagePresenter.deviceInfo(androidId);
         }
-        messagePresenter.getInit(androidId);
+        if(NetUtil.isNetworkAccessiable(MainActivity.this)){
+            messagePresenter.getInit(androidId);
+        }else {
+            timel = new CountDownTimer(1000*180, 3000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                        if(NetUtil.isNetworkAccessiable(MainActivity.this)){
+                            //网络请求
+                                messagePresenter.getInit(androidId);
+                        }
+
+
+
+                }
+                @Override
+                public void onFinish() {
+
+                }
+            }.start();
+        }
+
+
     }
 
+    @Override
+    public void notifyBattery(int level, int scale, int status) {
+           titleBarView.notifyBattery(level, scale, status);
+    }
+    private CountDownTimer timel;
     @Override
     public void initOther() {
         PowerManager pm = (PowerManager) MainActivity.this.getSystemService(Context.POWER_SERVICE);
@@ -121,6 +161,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 showPop();
             }
         });
@@ -204,6 +245,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private TextView menuName;
     private TextView clockTime;
 
+    private SoundPool star;//声明一个SoundPool
+    private int music;//定义一个整型用load（）；来设置suondID
     public void showJPushData(final Message message) {
         if (wakeLock != null) {
             wakeLock.release();
@@ -215,6 +258,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 //        }
         // 想设置震动大小可以通过改变pattern来设定，如果开启时间太短，震动效果可能感觉不到
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        star.play(music, 1, 1, 0, 1, 1);
+
         long[] pattern = {100, 400, 100, 400}; // 停止 开启 停止 开启
         vibrator.vibrate(pattern, -1);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -279,7 +324,9 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         complain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//完成
-                messagePresenter.finishPushMessage(pushId, MainActivity.this);
+                Intent intent = new Intent(MainActivity.this, RespondActivity.class);
+                startActivity(intent);
+//                messagePresenter.finishPushMessage(pushId, MainActivity.this);
                 window.dismiss();
                 isShow = false;
                 timer.cancel();
@@ -305,11 +352,14 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         if (type == 1) {//获取版本信息
             Version version = (Version) entity;
             String apkVersion = version.getApkVersion();
-            if (getVersion(this) != apkVersion && !getVersion(this).equals(apkVersion)) {
+            if (apkVersion.compareTo(getVersion(this)) > 0) {
                 messagePresenter.getApkInfo();
             }
             if(TextUtil.isNotEmpty(version.getWatchName())){
+                timel.cancel();
                 titleBarView.setBackText(R.string.main_name,"－"+version.getWatchName());
+            }else {
+                messagePresenter.getInit(androidId);
             }
 
         } else if (type == 2) {//进行版本的自动下载更新
@@ -338,6 +388,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         if (type == 3) {
             popSignOut.dismiss();
             Intent intent =  new Intent(Settings.ACTION_SETTINGS);
+
             startActivity(intent);
             finishAffinity();
         }
@@ -375,7 +426,6 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         View contentView = LayoutInflater.from(this).inflate(R.layout.pop_signout, null);
         popSignOut = new PopupWindow(contentView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         popSignOut.setContentView(contentView);
-
         editText = (EditText) contentView.findViewById(R.id.et_psw);
         TextView tvCancel = (TextView) contentView.findViewById(R.id.tv_cancel);
         TextView tvSure = (TextView) contentView.findViewById(R.id.tv_sure);

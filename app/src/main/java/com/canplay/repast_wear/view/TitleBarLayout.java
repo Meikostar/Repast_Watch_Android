@@ -1,7 +1,9 @@
 package com.canplay.repast_wear.view;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -34,7 +36,7 @@ import butterknife.ButterKnife;
 public class TitleBarLayout extends FrameLayout {
 
     @BindView(R.id.title_layout)
-    RelativeLayout title_layout;
+    LinearLayout title_layout;
 
     @BindView(R.id.title_text)
     /** 标题 */
@@ -49,7 +51,14 @@ public class TitleBarLayout extends FrameLayout {
     TextView clockTime;
     @BindView(R.id.title_r)
     TextView titleR;
-
+    @BindView(R.id.iv_battery)
+    ImageView ivBattery;
+    @BindView(R.id.iv_batterys)
+    ImageView ivBatterys;
+    @BindView(R.id.iv_change_battery)
+    ImageView ivBatteryCharging;
+    @BindView(R.id.rl_bg)
+    RelativeLayout rl_bg;
     private TextView textView;
 
     @BindView(R.id.title_left_layout)
@@ -64,12 +73,56 @@ public class TitleBarLayout extends FrameLayout {
 
     public final static int right_img_id = CanplayUtils.generateViewId();
     private OnBackBtnClickListener backBtnClickListener;
-    private OnRightBtnClickListener rightBtnClickListener;
+    private OnRightBtnClickListener rightBtnClickListener; 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             clockTime.setText(DateUtil.getSystemTime());
         }
     };
+    public void notifyBattery(int level, int scale, int status) {
+        ivBatterys.setVisibility(VISIBLE);
+        int per = scale / 6;
+        int batteryPic;//电量图片
+        int batteryAnimation;//电量动态增长
+        if (level < per) {
+            batteryAnimation = R.drawable.animation_battery_0;
+            batteryPic = R.drawable.be_1;
+        } else if (level < per * 2) {
+            batteryAnimation = R.drawable.animation_battery_2;
+            batteryPic = R.drawable.be_2;
+        } else if (level < per * 3) {
+            batteryAnimation = R.drawable.animation_battery_3;
+            batteryPic = R.drawable.be_3;
+        } else if (level < per * 4) {
+            batteryAnimation = R.drawable.animation_battery_4;
+            batteryPic = R.drawable.be_4;
+        } else if (level < per * 5) {
+            batteryAnimation = R.drawable.animation_battery_5;
+            batteryPic = R.drawable.be_5;
+        } else {
+            batteryAnimation = R.drawable.animation_battery_6;
+            batteryPic = R.drawable.be_6;
+        }
+
+        if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
+            ivBattery.setBackgroundResource(batteryAnimation);//將電量背景修改為animation即可
+            AnimationDrawable frameAnimation = (AnimationDrawable)
+                    ivBattery.getBackground();
+            if (!frameAnimation.isRunning()) {
+                frameAnimation.stop();
+                frameAnimation.start();
+            }
+            ivBatteryCharging.setVisibility(View.VISIBLE);
+
+
+        } else {
+            ivBatteryCharging.setVisibility(View.INVISIBLE);
+
+            ivBattery.setBackgroundResource(batteryPic);
+
+        }
+
+    }
 
     public TitleBarLayout(Context context) {
         this(context, null);
@@ -93,6 +146,9 @@ public class TitleBarLayout extends FrameLayout {
      * 初始化标题栏
      */
     protected void initView() {
+//        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)rl_bg.getLayoutParams();
+//        layoutParams.setMargins(0,0,150,0);
+//        rl_bg.setLayoutParams(layoutParams);
         // 左边按钮的事件
         title_left_layout.setOnClickListener(new OnClickListener() {
 
