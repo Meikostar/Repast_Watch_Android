@@ -16,7 +16,7 @@ public class Version {
      */
 
     private int version;
-    private int sleepTime;
+    private String sleepTime;
     private int type;
     private int userId;
     private int thirdSupport;
@@ -41,11 +41,11 @@ public class Version {
         this.version = version;
     }
 
-    public int getSleepTime() {
+    public String getSleepTime() {
         return sleepTime;
     }
 
-    public void setSleepTime(int sleepTime) {
+    public void setSleepTime(String sleepTime) {
         this.sleepTime = sleepTime;
     }
 

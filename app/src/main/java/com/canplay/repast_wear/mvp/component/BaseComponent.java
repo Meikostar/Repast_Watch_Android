@@ -6,11 +6,13 @@ import com.canplay.repast_wear.mvp.ActivityScope;
 import com.canplay.repast_wear.mvp.activity.BaseAdressActivity;
 import com.canplay.repast_wear.mvp.activity.BinderActivity;
 import com.canplay.repast_wear.mvp.activity.BinderTabeActivity;
+import com.canplay.repast_wear.mvp.activity.DetailActivity;
 import com.canplay.repast_wear.mvp.activity.HaveRespondFragment;
 import com.canplay.repast_wear.mvp.activity.MainActivity;
 import com.canplay.repast_wear.mvp.activity.NoRespondFragment;
 import com.canplay.repast_wear.mvp.activity.RespondActivity;
 import com.canplay.repast_wear.mvp.activity.ToContactActivity;
+import com.canplay.repast_wear.mvp.activity.orderFragment;
 
 import dagger.Component;
 
@@ -36,5 +38,7 @@ public interface BaseComponent{
     void inject(NoRespondFragment noRespondFragment);
 
     void inject(HaveRespondFragment haveRespondFragment);
+    void inject(orderFragment haveRespondFragment);
+    void inject(DetailActivity haveRespondFragment);
 
 }

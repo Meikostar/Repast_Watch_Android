@@ -33,6 +33,8 @@ public class FastJsonResponseBodyConverter<T> implements Converter<ResponseBody,
         try{
             Logger.d("convert:" + value.toString());
             BaseEntity baseEntity = JSON.parseObject(value.string(), BaseEntity.class);
+
+
             Logger.d("convert:" + baseEntity.toString());
             if(baseEntity.getCode() == 0){
                 if(baseEntity.getData() == null)

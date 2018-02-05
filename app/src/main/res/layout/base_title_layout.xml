@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/title_bar_height"
-    android:background="@color/black">
+    android:background="#333">
     
     <LinearLayout
         android:id="@+id/title_right_layout"
@@ -23,7 +23,7 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/dp_10"
         android:paddingRight="@dimen/dp_10">
-        
+
         <TextView
             android:id="@+id/title_back_tv"
             android:layout_width="wrap_content"
@@ -31,8 +31,9 @@
             android:drawableLeft="@mipmap/back"
             android:gravity="center"
             android:text="返回"
-            android:textSize="24px"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="24px" />
+
         <TextView
             android:singleLine="true"
             android:visibility="gone"
@@ -50,13 +51,14 @@
     <RelativeLayout
         android:id="@+id/rl_bg"
         android:layout_alignRight="@+id/clock_time"
-        android:layout_marginRight="5dp"
+
         android:layout_alignParentRight="true"
-        android:layout_width="60dp"
+        android:layout_width="20dp"
         android:layout_height="match_parent">
         <ImageView
+
             android:layout_marginRight="0.5dp"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:id="@+id/iv_batterys"
             android:scaleType="fitXY"
             android:src="@drawable/bettr_bg"
@@ -65,20 +67,23 @@
             android:layout_width="26dp"
             android:layout_height="17dp" />
         <ImageView
+            android:visibility="invisible"
+            android:src="@drawable/power_00"
+
+            android:layout_centerVertical="true"
             android:id="@+id/iv_battery"
             android:scaleType="fitXY"
-            android:layout_marginTop="13.5dp"
-            android:layout_width="26dp"
-            android:layout_height="16dp" />
+            android:layout_width="20dp"
+            android:layout_height="25dp"/>
         <ImageView
+            android:visibility="invisible"
             android:scaleType="fitXY"
-            android:src="@drawable/bertt_sd"
+            android:src="@drawable/power_charge"
             android:id="@+id/iv_change_battery"
+            android:layout_centerVertical="true"
 
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="6dp"
-            android:layout_width="16dp"
-            android:layout_height="13dp" />
+            android:layout_width="20dp"
+            android:layout_height="25dp" />
     </RelativeLayout>
 
     <TextView
@@ -88,7 +93,10 @@
         android:layout_centerInParent="true"
         android:focusable="true"
         android:gravity="center"
+        android:text=""
+        android:maxLength="3"
         android:maxLines="1"
+        android:layout_marginRight="6dp"
         android:scrollHorizontally="true"
         android:textColor="@color/white"
         android:textStyle="bold" />

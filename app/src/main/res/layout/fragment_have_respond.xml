@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="不存在已完成信息"
+        android:text="暂无订单信息"
         android:textColor="@color/round_hui"
         android:visibility="gone"/>
 </RelativeLayout>

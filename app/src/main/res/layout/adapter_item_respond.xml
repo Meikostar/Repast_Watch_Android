@@ -8,11 +8,13 @@
     android:layout_marginTop="6dp"
     android:background="@color/black">
     <LinearLayout
+
+        android:layout_alignRight="@+id/complain"
         android:id="@+id/ll_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
-        android:layout_marginRight="28dp"
+        android:layout_marginRight="38dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/call_bg"
         android:orientation="vertical">
@@ -42,18 +44,7 @@
                 android:text="点餐"
                 android:textColor="@color/white"
                 android:textSize="18px" />
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp"
-                android:id="@+id/complain"
-                android:layout_width="45px"
-                android:layout_height="45px"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/green_cycle"
-                android:gravity="center"
-                android:text="完成"
-                android:textColor="#ffffff"
-                android:textSize="16px" />
+
             <ImageView
                 android:visibility="gone"
                 android:id="@+id/image_next"
@@ -108,7 +99,19 @@
             android:textSize="18px"
             android:text="1分10秒前"/>
     </LinearLayout>
-
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/complain"
+        android:layout_width="60px"
+        android:layout_height="100px"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/green_trclee"
+        android:gravity="center"
+        android:text="完成"
+        android:textColor="#ffffff"
+        android:textSize="16px" />
     <!--<TextView-->
     <!--android:id="@+id/table_number"-->
     <!--android:layout_width="44px"-->

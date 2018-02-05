@@ -80,44 +80,46 @@ public class TitleBarLayout extends FrameLayout {
         }
     };
     public void notifyBattery(int level, int scale, int status) {
-        ivBatterys.setVisibility(VISIBLE);
+//        ivBatterys.setVisibility(VISIBLE);
         int per = scale / 6;
         int batteryPic;//电量图片
         int batteryAnimation;//电量动态增长
         if (level < per) {
             batteryAnimation = R.drawable.animation_battery_0;
-            batteryPic = R.drawable.be_1;
+            batteryPic = R.drawable.power_01;
         } else if (level < per * 2) {
             batteryAnimation = R.drawable.animation_battery_2;
-            batteryPic = R.drawable.be_2;
+            batteryPic = R.drawable.power_02;
         } else if (level < per * 3) {
             batteryAnimation = R.drawable.animation_battery_3;
-            batteryPic = R.drawable.be_3;
+            batteryPic = R.drawable.power_03;
         } else if (level < per * 4) {
             batteryAnimation = R.drawable.animation_battery_4;
-            batteryPic = R.drawable.be_4;
+            batteryPic = R.drawable.power_04;
         } else if (level < per * 5) {
             batteryAnimation = R.drawable.animation_battery_5;
-            batteryPic = R.drawable.be_5;
+            batteryPic = R.drawable.power_05;
         } else {
             batteryAnimation = R.drawable.animation_battery_6;
-            batteryPic = R.drawable.be_6;
+            batteryPic = R.drawable.power_06;
         }
 
         if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-            ivBattery.setBackgroundResource(batteryAnimation);//將電量背景修改為animation即可
-            AnimationDrawable frameAnimation = (AnimationDrawable)
+//            ivBattery.setBackgroundResource(batteryAnimation);//將電量背景修改為animation即可
+//            AnimationDrawable frameAnimation = (AnimationDrawable)
                     ivBattery.getBackground();
-            if (!frameAnimation.isRunning()) {
-                frameAnimation.stop();
-                frameAnimation.start();
-            }
+//            if (!frameAnimation.isRunning()) {
+//                frameAnimation.stop();
+//                frameAnimation.start();
+//            }
             ivBatteryCharging.setVisibility(View.VISIBLE);
+
+            ivBattery.setVisibility(View.INVISIBLE);
 
 
         } else {
             ivBatteryCharging.setVisibility(View.INVISIBLE);
-
+            ivBattery.setVisibility(View.VISIBLE);
             ivBattery.setBackgroundResource(batteryPic);
 
         }

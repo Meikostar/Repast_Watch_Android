@@ -8,11 +8,14 @@ import com.canplay.repast_wear.base.manager.ApiManager;
 import com.canplay.repast_wear.mvp.http.MessageApi;
 import com.canplay.repast_wear.mvp.model.ApkUrl;
 import com.canplay.repast_wear.mvp.model.DEVICE;
+import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.mvp.model.Resps;
 import com.canplay.repast_wear.mvp.model.RespsTable;
 import com.canplay.repast_wear.mvp.model.Version;
 import com.canplay.repast_wear.net.MySubscriber;
+import com.canplay.repast_wear.util.SpUtil;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,6 +53,61 @@ public class MessagePresenter implements MessageContract.Presenter {
             public void onNext(Resps entity) {
                 mView.toList(entity.getPushListResps(),entity.getHasNext());
 //                mView.toEntity(entity);
+            }
+        });
+    }
+    @Override
+    public void watchOrderInfo(String detailNo, final Context context) {
+        Map<String, String> params = new TreeMap<>();
+        params.put("detailNo", detailNo + "");
+
+        subscription = ApiManager.setSubscribe(messageApi.watchOrderInfo(ApiManager.getParameters(params, true)), new MySubscriber<List<Message >>() {
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(List<Message > entity) {
+                mView.toList(entity,0);
+//                mView.toEntity(entity);
+            }
+        });
+    }
+
+
+    @Override
+    public void getOrderList(int pageNo, final Context context) {
+        Map<String, String> params = new TreeMap<>();
+
+        params.put("page", pageNo + "");//当前页 首页传1
+        subscription = ApiManager.setSubscribe(messageApi.watchPushOrder(ApiManager.getParameters(params, true)), new MySubscriber<Resps>() {
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(Resps entity) {
+                mView.toList(entity.watchOrderLists,entity.getHasNext());
+//                mView.toEntity(entity);
+            }
+        });
+    }
+    @Override
+    public void finishPush(String pushId, final Context context) {
+        Map<String, String> params = new TreeMap<>();
+
+        params.put("pushId", pushId + "");//当前页 首页传1
+        subscription = ApiManager.setSubscribe(messageApi.finishPush(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(String entity) {
+                mView.toNextStep(2);
             }
         });
     }
@@ -122,19 +180,24 @@ public class MessagePresenter implements MessageContract.Presenter {
         });
     }
     @Override
-    public void deviceSignOut(String deviceCode, String psw, final int type) {
+    public void deviceSignOut(String deviceCode, String psw, final int type,int types) {
         Map<String, String> params = new TreeMap<>();
+        SpUtil  sp = SpUtil.getInstance();
+
+       String businessId = sp.getString("businessId");
         params.put("deviceCode", deviceCode + "");
         params.put("pwd", psw + "");
-        subscription = ApiManager.setSubscribe(messageApi.deviceSignOut(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
-            @Override
-            public void onError(Throwable e) {
-                mView.toNextStep(4);//密码错误处理
+        params.put("type", types + "");
+        params.put("businessId", businessId + "");
+            subscription = ApiManager.setSubscribe(messageApi.deviceSignOut(ApiManager.getParameters(params, true)), new MySubscriber<String>() {
+                @Override
+                public void onError(Throwable e) {
+                    mView.toNextStep(4);//密码错误处理
 //                super.onError(e);
-            }
+                }
 
-            @Override
-            public void onNext(String entity) {
+                @Override
+                public void onNext(String entity) {
                 if (type ==3)
                 mView.toNextStep(3);
                 else

@@ -3,59 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
+    <com.canplay.repast_wear.view.NoScrollViewPager
 
-    <LinearLayout
-        android:id="@+id/ll_container"
+        android:id="@+id/viewpager_main"
+        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="41dp"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/show"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="100px"
-                android:layout_height="100px"
-                android:src="@drawable/count" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="14dp"
-                android:text="@string/count"
-                android:textColor="@color/white"
-                android:textSize="24px" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="100px"
-                android:layout_height="100px"
-                android:src="@drawable/message" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="14dp"
-                android:text="@string/message"
-                android:textColor="@color/white"
-                android:textSize="24px" />
-        </LinearLayout>
+        android:layout_height="match_parent"
+        />
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30px"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_first"
+            android:src="@drawable/cycle_whilte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/iv_second"
+            android:layout_marginLeft="6dp"
+            android:src="@drawable/cycle_whilte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </RelativeLayout>

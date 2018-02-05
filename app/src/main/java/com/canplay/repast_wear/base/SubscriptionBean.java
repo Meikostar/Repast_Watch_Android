@@ -10,7 +10,7 @@ package com.canplay.repast_wear.base;
 public class SubscriptionBean {
     public static int TIME=111;
     public static int CHOOSE=112;
-    public static int FINISH=211;
+    public static int SIGNOUT=211;
 
 
     /**

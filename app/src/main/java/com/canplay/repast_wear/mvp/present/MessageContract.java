@@ -43,7 +43,7 @@ public class MessageContract {
         /**
          * 推送状态消息
          */
-        void deviceSignOut(String deviceCode, String pwd, int type);
+        void deviceSignOut(String deviceCode, String pwd, int type,int types);
 
         /**
          * 获得绑定信息
@@ -61,5 +61,10 @@ public class MessageContract {
         // apk下载 POST
         void getApkInfo();
 
+
+        void getOrderList(int pageNo, final Context context);
+
+        void finishPush(String pushId, final Context context);
+        void watchOrderInfo(String detailNo, final Context context);
     }
 }

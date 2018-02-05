@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.BatteryManager;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -21,7 +22,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +31,7 @@ import com.canplay.repast_wear.base.BaseActivity;
 import com.canplay.repast_wear.base.BaseApplication;
 import com.canplay.repast_wear.base.RxBus;
 import com.canplay.repast_wear.base.SubscriptionBean;
+import com.canplay.repast_wear.mvp.adapter.FragmentViewPagerAdapter;
 import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
 import com.canplay.repast_wear.mvp.model.ApkUrl;
 import com.canplay.repast_wear.mvp.model.DEVICE;
@@ -42,8 +43,10 @@ import com.canplay.repast_wear.util.DownloadApk;
 import com.canplay.repast_wear.util.NetUtil;
 import com.canplay.repast_wear.util.SpUtil;
 import com.canplay.repast_wear.util.TextUtil;
+import com.canplay.repast_wear.view.NoScrollViewPager;
 import com.canplay.repast_wear.view.TitleBarLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,10 +61,13 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
     @Inject
     MessagePresenter messagePresenter;
-    @BindView(R.id.show)
-    LinearLayout show;
-    @BindView(R.id.message)
-    LinearLayout llmessage;
+
+    @BindView(R.id.viewpager_main)
+    NoScrollViewPager viewpagerMain;
+    @BindView(R.id.iv_first)
+    ImageView ivFirst;
+    @BindView(R.id.iv_second)
+    ImageView ivSecond;
 
 
     private Subscription mSubscription;
@@ -76,49 +82,60 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     private PopupWindow popSignOut;
     private EditText editText;
     private PowerManager.WakeLock wakeLock;
+    private FragmentViewPagerAdapter mainViewPagerAdapter;
+    private List<Fragment> mFragments;
 
     @Override
     public void initInjector() {
         DaggerBaseComponent.builder().appComponent(((BaseApplication) getApplication()).getAppComponent()).build().inject(this);
         messagePresenter.attachView(this);
     }
+
     private int times;
     private int status;
     private TitleBarLayout titleBarView;
+
     @Override
     public void initCustomerUI() {
         initUI(R.layout.activity_main);
         ButterKnife.bind(this);
-         titleBarView = getTitleBarView();
+        titleBarView = getTitleBarView();
         titleBarView.setLeftArrowDisable();
-        titleBarView.setBackText(R.string.main_name,null);
-        star= new SoundPool(10, AudioManager.STREAM_SYSTEM, 0);//第一个参数为同时播放数据流的最大个数，第二数据流类型，第三为声音质量
+
+        titleBarView.setBackText(R.string.main_name, null);
+        star = new SoundPool(10, AudioManager.STREAM_SYSTEM, 0);//第一个参数为同时播放数据流的最大个数，第二数据流类型，第三为声音质量
         music = star.load(this, R.raw.star, 1); //把你的声音素材放到res/raw里，第2个参数即为资源文件，第3个为音乐的优先级
 
         sp = SpUtil.getInstance();
-        androidId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         sp.putString("deviceCode", androidId);
+        setViewPagerListener();
+        addFragment();
+        mainViewPagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager(), mFragments);
+        viewpagerMain.setAdapter(mainViewPagerAdapter);
+        viewpagerMain.setOffscreenPageLimit(2);//设置缓存view 的个数
+        viewpagerMain.setCurrentItem(0);
         if (!sp.getBoolean("hasBinder")) {
             startActivity(new Intent(this, BinderActivity.class));
             finish();
         } else {
 //            messagePresenter.deviceInfo(androidId);
         }
-        if(NetUtil.isNetworkAccessiable(MainActivity.this)){
+        if (NetUtil.isNetworkAccessiable(MainActivity.this)) {
             messagePresenter.getInit(androidId);
-        }else {
-            timel = new CountDownTimer(1000*180, 3000) {
+        } else {
+            timel = new CountDownTimer(1000 * 180, 3000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
 
-                        if(NetUtil.isNetworkAccessiable(MainActivity.this)){
-                            //网络请求
-                                messagePresenter.getInit(androidId);
-                        }
-
+                    if (NetUtil.isNetworkAccessiable(MainActivity.this)) {
+                        //网络请求
+                        messagePresenter.getInit(androidId);
+                    }
 
 
                 }
+
                 @Override
                 public void onFinish() {
 
@@ -129,11 +146,45 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
     }
 
+    private FisrstFragment fisrstFragment;
+    private SecondFragment secondFragment;
+
+    private void addFragment() {
+        mFragments = new ArrayList<>();
+        fisrstFragment = new FisrstFragment();
+        secondFragment = new SecondFragment();
+
+        mFragments.add(fisrstFragment);
+        mFragments.add(secondFragment);
+
+
+    }
+
+    private void setViewPagerListener() {
+        selection(0);
+        viewpagerMain.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                selection(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+    }
+
     @Override
     public void notifyBattery(int level, int scale, int status) {
-           titleBarView.notifyBattery(level, scale, status);
+        titleBarView.notifyBattery(level, scale, status);
     }
+
     private CountDownTimer timel;
+
     @Override
     public void initOther() {
         PowerManager pm = (PowerManager) MainActivity.this.getSystemService(Context.POWER_SERVICE);
@@ -149,6 +200,8 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                         wakeLock.acquire();
                     }
                     showJPushData(message);
+                } else if (bean.type == SubscriptionBean.SIGNOUT) {
+                    showPop();
                 }
             }
         }, new Action1<Throwable>() {
@@ -158,20 +211,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             }
         });
         RxBus.getInstance().addSubscription(mSubscription);
-        show.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                showPop();
-            }
-        });
-        llmessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RespondActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -196,6 +236,16 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 //        }).show();
     }
 
+    public void selection(int poistion){
+        if(poistion==0){
+            ivFirst.setImageResource(R.drawable.cycle_whilte);
+            ivSecond.setImageResource(R.drawable.cycle_shade);
+        }else {
+            ivFirst.setImageResource(R.drawable.cycle_shade);
+            ivSecond.setImageResource(R.drawable.cycle_whilte);
+        }
+    }
+
     public void showPop() {
         final View contentView = LayoutInflater.from(this).inflate(R.layout.pop_account, null);
         final PopupWindow dialog = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -211,7 +261,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         //动画效果（进入页面和退出页面时的效果）
         //window.setAnimationStyle(R.style.windows);
         //显示位置：showAtLocation(主布局所点击的按钮id, 位置, x, y);
-        dialog.showAtLocation(MainActivity.this.findViewById(R.id.show), Gravity.BOTTOM, 0, 0);
+        dialog.showAtLocation(MainActivity.this.findViewById(R.id.iv_first), Gravity.BOTTOM, 0, 0);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,6 +297,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
 
     private SoundPool star;//声明一个SoundPool
     private int music;//定义一个整型用load（）；来设置suondID
+
     public void showJPushData(final Message message) {
         if (wakeLock != null) {
             wakeLock.release();
@@ -269,7 +320,6 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             window = new PopupWindow(view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
             toOther = (TextView) view.findViewById(R.id.to_other);
             form = (TextView) view.findViewById(R.id.former);
-            callList = (TextView) view.findViewById(R.id.call_list);
             complain = (TextView) view.findViewById(R.id.complain);
             menuName = (TextView) view.findViewById(R.id.menuName);
             clockTime = (TextView) view.findViewById(R.id.clock_time);
@@ -324,8 +374,17 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         complain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//完成
-                Intent intent = new Intent(MainActivity.this, RespondActivity.class);
-                startActivity(intent);
+
+                if(message.getMenuName().equals("订单")){
+                    Intent intent = new Intent(MainActivity.this, OrderListActivity.class);
+
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(MainActivity.this, RespondActivity.class);
+
+                    startActivity(intent);
+                }
+
 //                messagePresenter.finishPushMessage(pushId, MainActivity.this);
                 window.dismiss();
                 isShow = false;
@@ -333,11 +392,18 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                 window = null;
             }
         });
-        callList.setOnClickListener(new View.OnClickListener() {
+        form.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RespondActivity.class));
-            }
+                if(message.getMenuName().equals("订单")){
+                    Intent intent = new Intent(MainActivity.this, OrderListActivity.class);
+
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(MainActivity.this, RespondActivity.class);
+
+                    startActivity(intent);
+                }            }
         });
     }
 
@@ -355,17 +421,24 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             if (apkVersion.compareTo(getVersion(this)) > 0) {
                 messagePresenter.getApkInfo();
             }
-            if(TextUtil.isNotEmpty(version.getWatchName())){
-                timel.cancel();
-                titleBarView.setBackText(R.string.main_name,"－"+version.getWatchName());
-            }else {
+            if (TextUtil.isNotEmpty(version.getWatchName())) {
+                if(timel!=null){
+                    timel.cancel();
+                }
+
+                String watchName = version.getWatchName();
+                if(watchName.length()>3){
+                    watchName=watchName.substring(0,3);
+                }
+                titleBarView.setBackText(R.string.main_name, "－" + watchName);
+            } else {
                 messagePresenter.getInit(androidId);
             }
 
         } else if (type == 2) {//进行版本的自动下载更新
             ApkUrl apkUrl = (ApkUrl) entity;
             String uploadUrl = apkUrl.getUploadUrl();
-            new Thread(new DownloadApk(uploadUrl,this)).start();
+            new Thread(new DownloadApk(uploadUrl, this)).start();
         } else if (type == 3) {
             DEVICE device = (DEVICE) entity;
             Log.e("device", device.toString());
@@ -387,7 +460,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         }
         if (type == 3) {
             popSignOut.dismiss();
-            Intent intent =  new Intent(Settings.ACTION_SETTINGS);
+            Intent intent = new Intent(Settings.ACTION_SETTINGS);
 
             startActivity(intent);
             finishAffinity();
@@ -443,7 +516,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                     toast = Toast.makeText(MainActivity.this, "输入密码不能为空!", Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-                    messagePresenter.deviceSignOut(androidId, password, 3);
+                    messagePresenter.deviceSignOut(androidId, password, 3, 0);
                 }
             }
         });
@@ -484,5 +557,13 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
             e.printStackTrace();
         }
         return "";
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }

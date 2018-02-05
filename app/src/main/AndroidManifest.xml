@@ -193,6 +193,8 @@
         <activity android:name=".mvp.activity.RespondActivity" />
         <activity android:name=".mvp.activity.BinderTabeActivity"/>
         <activity android:name=".mvp.activity.BaseAdressActivity"/>
+        <activity android:name=".mvp.activity.OrderListActivity"/>
+        <activity android:name=".mvp.activity.DetailActivity"/>
 
         <receiver android:name=".net.BootReceiver" >
             <intent-filter>

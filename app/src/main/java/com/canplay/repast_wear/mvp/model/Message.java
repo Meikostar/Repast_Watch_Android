@@ -11,9 +11,21 @@ public class Message implements Serializable{
    * */
     private Long pushId;
     public int state;
+    public int type;
+    public Long count;
     private Long businessId;
     private String tableNo;
     private String menuName;
+    public String detailNo;
+    public String cnName;
+//"cnName": "烤翅",
+//        "count": 1
+//    "pushId": 3,
+//            "menuName": "订单",
+//            "tableNo": "测试桌号",
+//            "time": 1516350633287,
+//            "type": 0,
+//            "detailNo": "1065669604228988930"
 
     /*
      "pushId": 61,

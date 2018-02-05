@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Resps implements Serializable{
     private List<Message> pushListResps;
+    public List<Message> watchOrderLists;
     private int hasNext;
 
     public Resps() {
