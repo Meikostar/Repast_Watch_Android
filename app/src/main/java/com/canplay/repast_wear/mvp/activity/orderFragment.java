@@ -17,6 +17,7 @@ import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.base.BaseApplication;
 import com.canplay.repast_wear.base.BaseFragment;
 import com.canplay.repast_wear.mvp.adapter.RespondAdapter;
+import com.canplay.repast_wear.mvp.adapter.RespondAdapters;
 import com.canplay.repast_wear.mvp.component.DaggerBaseComponent;
 import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.mvp.model.Resps;
@@ -52,7 +53,7 @@ public class orderFragment extends BaseFragment implements MessageContract.View 
     View line;
     private Unbinder unbinder;
     private List<Message> messages = new ArrayList<>();
-    private RespondAdapter adapter;
+    private RespondAdapters adapter;
     private OrderListActivity activity;
     private Resps resps;
     private SpUtil spUtil;
@@ -93,7 +94,7 @@ public class orderFragment extends BaseFragment implements MessageContract.View 
     }
 
     private void initView() {
-        adapter = new RespondAdapter(getActivity(), messages,listHaveRespond);
+        adapter = new RespondAdapters(getActivity(), messages,listHaveRespond);
         adapter.setType(1);
         listHaveRespond.setAdapter(adapter);
         messagePresenter.getOrderList( pageNo, getActivity());
@@ -163,14 +164,14 @@ public class orderFragment extends BaseFragment implements MessageContract.View 
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         noMoreView.setPadding(10, 10, 10, 10);
         mSwipeRefresh.setNoMoreView(noMoreView, layoutParams);
-        adapter.setDeletListener(new RespondAdapter.selectItemListener() {
+        adapter.setDeletListener(new RespondAdapters.selectItemListener() {
             @Override
             public void delete(Message message, int type, int poistion) {
                 poistions=poistion;
                 showPopWindow();
             }
         });
-        adapter.setClickListener(new RespondAdapter.ImageViewClickListener() {
+        adapter.setClickListener(new RespondAdapters.ImageViewClickListener() {
             @Override
             public void ImageClick(int position) {
                 if(messages.get(position) == null){

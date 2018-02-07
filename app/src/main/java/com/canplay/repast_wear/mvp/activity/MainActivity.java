@@ -124,7 +124,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         if (NetUtil.isNetworkAccessiable(MainActivity.this)) {
             messagePresenter.getInit(androidId);
         } else {
-            timel = new CountDownTimer(1000 * 180, 3000) {
+            timel = new CountDownTimer(10000 * 180, 3000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
 
@@ -430,6 +430,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
                 if(watchName.length()>3){
                     watchName=watchName.substring(0,3);
                 }
+                name_state=1;
                 titleBarView.setBackText(R.string.main_name, "－" + watchName);
             } else {
                 messagePresenter.getInit(androidId);
@@ -476,7 +477,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
     public void showTomast(String msg) {
 
     }
-
+   private int name_state=0;
 //    public void sendMessage(long tableId, long pushId) {
 //        Log.e("pushId", pushId + "");
 //        messagePresenter.watchPushMessage(pushId, tableId);

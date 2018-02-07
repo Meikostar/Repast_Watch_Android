@@ -2,13 +2,11 @@ package com.canplay.repast_wear.mvp.adapter;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,12 +15,13 @@ import com.canplay.repast_wear.R;
 import com.canplay.repast_wear.SwipmenuListView.SwipeListLayout;
 import com.canplay.repast_wear.mvp.model.Message;
 import com.canplay.repast_wear.util.DateUtil;
+import com.canplay.repast_wear.util.TextUtil;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RespondAdapter extends BaseAdapter {
+public class RespondAdapters extends BaseAdapter {
 
     private List<Message> messageList;
     private Context context;
@@ -34,7 +33,7 @@ public class RespondAdapter extends BaseAdapter {
     public void setDatas( List<Message> messageList){
         this.messageList = messageList;
     }
-    public RespondAdapter(Context context, List<Message> messageList, ListView lv_content) {
+    public RespondAdapters(Context context, List<Message> messageList, ListView lv_content) {
         this.messageList = messageList;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
@@ -96,8 +95,12 @@ public class RespondAdapter extends BaseAdapter {
             convertView.setTag(holder);
         }else holder =(ViewHolder) convertView.getTag();
         final Message message = messageList.get(position);
-        holder.tvContext.setText(message.getContent());
+        if(TextUtil.isNotEmpty(message.getMenuName())){
+            holder.tvContext.setText(message.getMenuName());
+        }
+
         holder.tableNumber.setText(message.getTableNo());
+
         holder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
