@@ -103,7 +103,7 @@ public class MainActivity extends BaseActivity implements MessageContract.View {
         titleBarView.setLeftArrowDisable();
 
         titleBarView.setBackText(R.string.main_name, null);
-        star = new SoundPool(10, AudioManager.STREAM_SYSTEM, 0);//第一个参数为同时播放数据流的最大个数，第二数据流类型，第三为声音质量
+        star = new SoundPool(1, AudioManager.STREAM_SYSTEM, 0);//第一个参数为同时播放数据流的最大个数，第二数据流类型，第三为声音质量
         music = star.load(this, R.raw.star, 1); //把你的声音素材放到res/raw里，第2个参数即为资源文件，第3个为音乐的优先级
 
         sp = SpUtil.getInstance();
